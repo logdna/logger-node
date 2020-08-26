@@ -2,6 +2,10 @@
 
 This file documents all notable changes in the`LogDNA Node.js logger package`. The release numbering uses [semantic versioning](http://semver.org).
 
+## [1.0.1] - August 26, 2020
+### Fixed
+* Corrected a broken link ("Best Practices") in docs/migrating-from-older-versions.md
+
 ## [1.0.0] - August 25, 2020
 ### Changed
 * Removed `debug` since it's not compatible everywhere.  See
@@ -33,4 +37,5 @@ This file documents all notable changes in the`LogDNA Node.js logger package`. T
 * Added a loadtest.js test to ensure there is not data loss
 * Exponential Backoff with Jitter algorithm implemented for HTTP retries
 
+[1.0.1]: https://github.com/logdna/logger-node/compare/1.0.0...1.0.1
 [1.0.0]: https://github.com/logdna/logger-node/tree/1.0.0
