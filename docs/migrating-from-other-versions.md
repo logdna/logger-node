@@ -33,7 +33,7 @@ The following functions were removed
 * `cleanUpAll` - This is no longer necessary for the same reasons as `flushAll`
 
 If you were using these functions, then they are easily replaced by calling `flush` manually, and awaiting the `cleared`
-event as described in our [Best Practices](../README#best-practices) recommendations.
+event as described in our [Best Practices](../README.md#best-practices) recommendations.
 
 ## `options` Key Name Changes
 All keys for supported options are now lowerCamelCase for consistency.  Old names have been deprecated and will still
