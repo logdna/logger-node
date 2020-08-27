@@ -76,15 +76,6 @@ test('.log() throws if options is a string and not a valid log entry', (t) => {
   t.plan(2)
   const logger = new Logger(apiKey, createOptions())
 
-  t.on('end', async () => {
-    nock.cleanAll()
-  })
-
-  nock(logger.url)
-    .post('/', () => { return true })
-    .query(() => { return true })
-    .reply(200, 'Ingester response')
-
   logger.on('error', (err) => {
     t.type(err, TypeError, 'Expected to be a TypeError')
     t.deepEqual(err, {
@@ -102,15 +93,6 @@ test('.log() throws if options is a string and not a valid log entry', (t) => {
 test('.log() rejects invalid `opts` data type', (t) => {
   t.plan(2)
   const logger = new Logger(apiKey, createOptions())
-
-  t.on('end', async () => {
-    nock.cleanAll()
-  })
-
-  nock(logger.url)
-    .post('/', () => { return true })
-    .query(() => { return true })
-    .reply(200, 'Ingester response')
 
   logger.on('error', (err) => {
     t.type(err, TypeError, 'Expected to be a TypeError')
@@ -405,4 +387,24 @@ test('User-level errors are discarded after emitting an error', (t) => {
 
   logger.log('Something is invalid about this line')
   logger.log('Something else is wrong with this line too')
+})
+
+test('.log() rejects lines if payloadStructure is not \'default\'', (t) => {
+  t.plan(2)
+  const logger = new Logger(apiKey, createOptions({
+    payloadStructure: 'agent'
+  }))
+
+  logger.on('error', (err) => {
+    t.type(err, Error, 'Expected to be a Error')
+    t.match(err, {
+      name: 'Error'
+    , message: 'Invalid method based on payloadStructure'
+    , meta: {
+        payloadStructure: 'agent'
+      , expected: 'default'
+      }
+    }, 'Expected Error is correct')
+  })
+  logger.log('log line')
 })
