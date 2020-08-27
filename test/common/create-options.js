@@ -21,6 +21,8 @@ module.exports = function createOptions({
 , baseBackoffMs = undefined
 , maxBackoffMs = undefined
 , meta = undefined
+, payloadStructure = undefined
+, compress = undefined
 } = {}) {
   return {
     key
@@ -42,5 +44,7 @@ module.exports = function createOptions({
   , baseBackoffMs
   , maxBackoffMs
   , meta
+  , payloadStructure
+  , compress
   }
 }

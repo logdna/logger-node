@@ -20,14 +20,17 @@
     * [error](#event-error)
         * [Error while sending to LogDNA](#error-while-sending-to-logdna)
         * [Error while calling `log()`](#error-while-calling-log)
+        * [Error due to `payloadStructure` mismatch](#error-due-to-payloadstructure-mismatch)
     * [removeMetaProperty](#event-removeMetaProperty)
     * [send](#event-send)
     * [warn](#event-warn)
         * [Warnings during `log()`](#warnings-during-log)
+        * [Warnings during `agentLog()`](#warnings-during-agentlog)
         * [Warnings during `removeMetaProperty`](#warnings-during-removemetaproperty)
 * **[API](#api)**
     * [createLogger](#createloggerkey-options)
     * [setupDefaultLogger](#setupdefaultloggerkey-options)
+    * [logger.agentLog](#loggeragentlogopts)
     * [logger.addMetaProperty](#loggeraddmetapropertykey-value)
     * [logger.flush](#loggerflush)
     * [logger.log](#loggerlogstatement-options)
@@ -172,6 +175,14 @@ will contain the following properties:
 * `used` [`<String>`][] - If a bad `level` is used in `options`, it will be ignored, and the default will be used.
    This property indicates what that value is.
 
+#### Error due to `payloadStructure` mismatch
+
+When `log()` or `agentLog()` is called, the `payloadStructure` must be set appropriately.  If it is not, an error is emitted.
+Keep in mind that `agentLog()` is reserved for LogDNA systems and is not intended for public usage.
+
+* `message` [`<String>`][] - Static message of `Invalid method based on payloadStructure`
+* `payloadStructure` [`<String>`][] - The current payload structure value that is set on the instance
+* `expected` [`<String>`][] - The expected payload structure to be able to call the method.
 
 ### Event: `'removeMetaProperty'`
 
@@ -211,6 +222,10 @@ For those cases, additional properties (apart from `message`) are included:
 
 * `statement` (Any) - If `log()` was called with a `null` string or an invalid data type, this key will contain the given log statement.
 
+#### Warnings during `agentLog()`
+
+* `statement` (Any) - If `agentLog()` was called with a `null` string or an invalid data type, this key will contain the given log statement.
+
 #### Warnings during `removeMetaProperty`
 
 * `key` [`<String>`][] - The key that the command attempted to remove but that did not exist
@@ -238,6 +253,8 @@ For those cases, additional properties (apart from `message`) are included:
     * `baseBackoffMs` [`<Number>`][] - Minimum exponential backoff time in milliseconds. **Default:** `3000`ms
     * `maxBackoffMs` [`<Number>`][] - Maximum exponential backoff time in milliseconds. **Default:** `30000`ms
     * `withCredentials` [`<Boolean>`][] - Passed to the request library to make CORS requests. **Default:** `false`
+    * `payloadStructure` [`<String>`][] - (*LogDNA usage only*) Ability to specify a different payload structure for ingestion. **Default:** `default`
+    * `compress` [`<Boolean>`][] - (*LogDNA usage only*) Compression support for the agent. **Default:** `false`
 * Throws: [`<TypeError>`][] | [`<TypeError>`][] | [`<Error>`][]
 * Returns: `Logger`
 
@@ -256,6 +273,9 @@ types, or the metadata object may not be parsed properly!
 `shimProperties` can be used to set up keys to look for in the `options` parameter of a `log()` call. If the specified keys
 are found in `options`, their key-values will be included the top-level of the final logging payload send to LogDNA.
 
+`payloadStructure` is only for LogDNA's use in other parts of the system such as our logging agent.
+It is not intended to be used by public consumers, and it should be left to the default value.
+
 For more information on the backoff algorithm and the options for it, see the [Exponential Backoff Strategy](#exponential-backoff-strategy) section.
 
 
@@ -272,6 +292,12 @@ const logdna = require('@logdna/logger')
 const logger = logdna.setupDefaultLogger('<YOUR KEY HERE>')
 const sameLogger = logdna.setupDefaultLogger()
 ```
+
+### `logger.agentLog(opts)`
+
+This method is for use exclusively by LogDNA, and is not intended for public logging.
+
+* Emits: [error](#event-error)
 
 ### `logger.addMetaProperty(key, value)`
 

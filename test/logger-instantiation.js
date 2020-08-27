@@ -4,6 +4,7 @@ const {test} = require('tap')
 const pkg = require('../package.json')
 const Logger = require('../lib/logger.js')
 const constants = require('../lib/constants.js')
+const payloads = require('../lib/payloads.js')
 const {apiKey, createOptions} = require('./common/index.js')
 
 test('Exports structure', async (t) => {
@@ -11,12 +12,14 @@ test('Exports structure', async (t) => {
   t.equal(Logger.name, 'Logger', 'Class name is correct')
 
   const methods = Object.getOwnPropertyNames(Logger.prototype)
-  t.equal(methods.length, 13, 'Logger.prototype prop count')
+  t.equal(methods.length, 15, 'Logger.prototype prop count')
   t.deepEqual(methods, [
     'constructor'
   , 'addMetaProperty'
+  , 'agentLog'
   , 'bufferLog'
   , 'flush'
+  , '_getSendPayload'
   , 'log'
   , 'removeMetaProperty'
   , 'send'
@@ -42,7 +45,7 @@ test('Logger instance properties', async (t) => {
       propertyVals[sym.toString()] = log[sym]
     }
     const symbolCount = Object.keys(propertyVals).length
-    tt.equal(symbolCount, 11, 'The number of declared symbols')
+    tt.equal(symbolCount, 13, 'The number of declared symbols')
     const expected = {
       'Symbol(lineLengthTotal)': 0
     , 'Symbol(buffer)': []
@@ -54,6 +57,8 @@ test('Logger instance properties', async (t) => {
     , 'Symbol(isSending)': false
     , 'Symbol(totalLinesReady)': 0
     , 'Symbol(backoffMs)': 3000
+    , 'Symbol(payloadStructure)': 'default'
+    , 'Symbol(compress)': false
     , 'Symbol(requestDefaults)': {
         auth: {
           username: apiKey
@@ -477,6 +482,32 @@ test('Instantiation Errors', async (t) => {
     }, {
       message: 'env cannot be longer than 80 chars'
     , name: 'TypeError'
+    }, 'Expected error thrown')
+  })
+
+  t.test('Bad payloadStructure', async (tt) => {
+    tt.throws(() => {
+      return new Logger(apiKey, {
+        payloadStructure: 'NOPE'
+      })
+    }, {
+      message: 'Invalid payloadStructure value'
+    , name: 'TypeError'
+    , meta: {
+        got: 'NOPE'
+      , expected: [...payloads.keys()]
+      }
+    }, 'Expected error thrown')
+  })
+
+  t.test('Compression not available with default payloadStructure', async (tt) => {
+    tt.throws(() => {
+      return new Logger(apiKey, {
+        compress: true
+      })
+    }, {
+      message: 'Compression not available'
+    , name: 'Error'
     }, 'Expected error thrown')
   })
 })
