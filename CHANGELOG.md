@@ -2,6 +2,12 @@
 
 This file documents all notable changes in the`LogDNA Node.js logger package`. The release numbering uses [semantic versioning](http://semver.org).
 
+## [1.1.0] - August 31, 2020
+### Added
+* Added a log method (`agentLog`) intended for LogDNA usage only. This will handle logging from our agent.
+* Added gzip compression to support `agentLog`. This should not be used for public consumers
+  and is only for the `agentLog` method.
+
 ## [1.0.1] - August 26, 2020
 ### Fixed
 * Corrected a broken link ("Best Practices") in docs/migrating-from-older-versions.md
@@ -37,5 +43,6 @@ This file documents all notable changes in the`LogDNA Node.js logger package`. T
 * Added a loadtest.js test to ensure there is not data loss
 * Exponential Backoff with Jitter algorithm implemented for HTTP retries
 
+[1.1.0]: https://github.com/logdna/logger-node/compare/1.0.1...1.1.0
 [1.0.1]: https://github.com/logdna/logger-node/compare/1.0.0...1.0.1
 [1.0.0]: https://github.com/logdna/logger-node/tree/1.0.0
