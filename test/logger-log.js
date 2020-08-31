@@ -758,11 +758,10 @@ test('removeMetaProperty() removes it from the payload; indexMeta: false', (t) =
 })
 
 test('Can call .log with HTTP (not https)', (t) => {
-  t.plan(2)
+  t.plan(1)
   const logger = new Logger(apiKey, createOptions({
-    protocol: 'http'
+    url: 'http://localhost:12345'
   }))
-  t.equal(logger[Symbol.for('requestDefaults')].useHttps, false, 'HTTPS is off')
   t.on('end', async () => {
     nock.cleanAll()
   })

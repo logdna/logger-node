@@ -76,8 +76,6 @@ test('Logger instance properties', async (t) => {
         , tags: undefined
         }
       , timeout: 5000
-      , withCredentials: false
-      , useHttps: true
       }
     }
     tt.equal(Object.keys(expected).length, symbolCount, 'Each symbol is tested')
@@ -96,7 +94,8 @@ test('Logger instance properties', async (t) => {
     , app: 'default'
     , level: 'INFO'
     , [Symbol.for('requestDefaults')]: {
-        userHttps: true
+        http: Object
+      , https: Object
       }
     })
   })
@@ -114,7 +113,6 @@ test('Logger instance properties', async (t) => {
     , shimProperties: ['one', 'two', 'three']
     , env: 'myEnv'
     , app: 'someAppName'
-    , withCredentials: true
     , url: 'http://localhost:80'
     , ip: ipv6
     , meta: {hey: 'there'}
@@ -136,9 +134,7 @@ test('Logger instance properties', async (t) => {
     , app: options.app
     , url: options.url
     , [Symbol.for('requestDefaults')]: {
-        withCredentials: options.withCredentials
-      , useHttps: false
-      , qs: {
+        qs: {
           hostname: options.hostname
         , mac: options.mac
         , ip: ipv6
@@ -204,20 +200,27 @@ test('Deprecated fields are still allowed and re-assigned', async (t) => {
     })
     tt.equal(log.indexMeta, true, 'indexMeta was set instead')
   })
-
-  t.test('with_credentails is re-assigned to withCredentials', async (tt) => {
-    const log = new Logger(apiKey, {
-      with_credentials: true
-    })
-    tt.equal(
-      log[Symbol.for('requestDefaults')].withCredentials
-    , true
-    , 'withCredentials was set instead'
-    )
-  })
 })
 
 test('Instantiation Errors', async (t) => {
+  t.test('with_credentails and withCredentials have been removed', async (tt) => {
+    tt.throws(() => {
+      return new Logger(apiKey, {
+        with_credentials: true
+      })
+    }, {
+      message: 'The withCredentials option is no longer necessary and has been removed.'
+    }, 'Expected error thrown for with_credentials')
+
+    tt.throws(() => {
+      return new Logger(apiKey, {
+        withCredentials: true
+      })
+    }, {
+      message: 'The withCredentials option is no longer necessary and has been removed.'
+    }, 'Expected error thrown for withCredentials')
+  })
+
   t.test('Auth key is required', async (tt) => {
     tt.throws(() => {
       return new Logger()

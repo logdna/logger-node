@@ -252,7 +252,6 @@ For those cases, additional properties (apart from `message`) are included:
     * `env` [`<String>`][] - An environment label attached to each message
     * `baseBackoffMs` [`<Number>`][] - Minimum exponential backoff time in milliseconds. **Default:** `3000`ms
     * `maxBackoffMs` [`<Number>`][] - Maximum exponential backoff time in milliseconds. **Default:** `30000`ms
-    * `withCredentials` [`<Boolean>`][] - Passed to the request library to make CORS requests. **Default:** `false`
     * `payloadStructure` [`<String>`][] - (*LogDNA usage only*) Ability to specify a different payload structure for ingestion. **Default:** `default`
     * `compress` [`<Boolean>`][] - (*LogDNA usage only*) Compression support for the agent. **Default:** `false`
 * Throws: [`<TypeError>`][] | [`<TypeError>`][] | [`<Error>`][]

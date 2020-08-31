@@ -62,7 +62,7 @@ test('Load test to ensure no data loss and expected payloads', async (t) => {
         name: 'Error'
       , message: 'An error occured while sending logs to the cloud.'
       , meta: {
-          actual: 'Request failed with status code 500'
+          actual: 'Response code 500 (Internal Server Error)'
         , code: 500
         , firstLine: line
         , lastLine: line

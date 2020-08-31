@@ -233,10 +233,11 @@ test('Error handling: when gzip fails, raw payload is sent instead', (t) => {
   , compress: true
   , flushIntervalMs: 100
   }))
+  const error = new Error('GZIP FAKE FAILURE')
 
   zlib.gzip = (_, cb) => {
     zlib.gzip = gzip
-    setImmediate(cb, new Error('GZIP FAKE FAILURE'))
+    setImmediate(cb, error)
   }
 
   t.on('end', async () => {
@@ -277,13 +278,10 @@ test('Error handling: when gzip fails, raw payload is sent instead', (t) => {
   logger.on('error', (err) => {
     t.deepEqual(err, {
       name: 'Error'
-    , message: 'Error gzipping data'
+    , message: 'Error gzipping body'
     , meta: {
         message: 'Will attempt to send data uncompressed'
-      , error: {
-          name: 'Error'
-        , message: 'GZIP FAKE FAILURE'
-        }
+      , error
       }
     }, 'An error was emitted for the gzip error')
   })

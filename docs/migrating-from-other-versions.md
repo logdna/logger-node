@@ -41,7 +41,7 @@ work, but a `console.warn` will be printed to inform the user to update them.  T
 
 * `logdna_url` is now just `url`
 * `index_meta` is now `indexMeta`
-* `with_credentials` is now `withCredentials`
+* `with_credentials` and `withCredentials` are no longer an option and will throw if used
 * `max_length` is no longer an option and will throw if used
 
 ## What it Looks Like Now

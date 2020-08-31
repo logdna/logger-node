@@ -25,7 +25,6 @@ declare module "logdna" {
     env?: string;
     baseBackoffMs?: number;
     maxBackoffMs?: number;
-    withCredentials?: boolean;
   }
 
   interface LogOptions {

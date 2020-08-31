@@ -16,8 +16,7 @@ module.exports = function createOptions({
 , timeout = null
 , shimProperties
 , env = undefined
-, withCredentials = null
-, url = `http://localhost:${port}`
+, url = `https://localhost:${port}`
 , baseBackoffMs = undefined
 , maxBackoffMs = undefined
 , meta = undefined
@@ -40,7 +39,6 @@ module.exports = function createOptions({
   , timeout
   , shimProperties
   , env
-  , withCredentials
   , baseBackoffMs
   , maxBackoffMs
   , meta
