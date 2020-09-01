@@ -270,72 +270,176 @@ test('HTTP timeout will emit Error and continue to retry', (t) => {
   logger.log('This will cause an HTTP timeout')
 })
 
-test('A 500-error will continue to retry', (t) => {
+test('A 500-level statusCode error will continue to retry', (t) => {
   const logger = new Logger(apiKey, createOptions({
-    baseBackoffMs: 100
-  , maxBackoffMs: 500
+    baseBackoffMs: 50
+  , maxBackoffMs: 100
   }))
-  let attempts = 0
 
-  t.on('end', async () => {
-    nock.cleanAll()
-  })
+  const codes = [
+    500
+  , 502
+  , 503
+  , 504
+  , 521
+  , 522
+  , 524
+  ]
 
-  // Fail 3 times, then succeed
-  nock(logger.url)
-    .post('/', () => {
-      t.equal(
-        logger[Symbol.for('isLoggingBackedOff')]
-      , false
-      , 'Logger is not backed off prior to the first failure'
-      )
-      return true
+  codes.forEach((code) => {
+    t.test(`Testing with statusCode: ${code}`, (tt) => {
+      let attempts = 0
+
+      tt.on('end', async () => {
+        nock.cleanAll()
+        logger.removeAllListeners()
+      })
+
+      // Fail 3 times, then succeed
+      nock(logger.url)
+        .post('/', () => {
+          tt.equal(
+            logger[Symbol.for('isLoggingBackedOff')]
+          , false
+          , 'Logger is not backed off prior to the first failure'
+          )
+          return true
+        })
+        .query(() => { return true })
+        .reply(code, 'SERVER KABOOM')
+        .post('/', () => {
+          tt.equal(
+            logger[Symbol.for('isLoggingBackedOff')]
+          , true
+          , 'Logger is backed off'
+          )
+          return true
+        })
+        .query(() => { return true })
+        .reply(code, 'SERVER KABOOM')
+        .post('/', () => { return true })
+        .query(() => { return true })
+        .reply(code, 'SERVER KABOOM')
+        .post('/', () => { return true })
+        .query(() => { return true })
+        .reply(200, 'Success')
+
+      logger.on('error', (err) => {
+        tt.type(err, Error, 'Error type is emitted')
+        tt.match(err, {
+          message: 'An error occured while sending logs to the cloud.'
+        , meta: {
+            actual: `Request failed with status code ${code}`
+          , code
+          , firstLine: 'This will cause a server 500ish error'
+          , lastLine: null
+          , retrying: true
+          , attempts: ++attempts
+          }
+        }, `Error properties are correct for attempt ${attempts}`)
+      })
+
+      logger.on('cleared', ({message}) => {
+        tt.equal(message, 'All accumulated log entries have been sent', 'cleared msg')
+        tt.equal(
+          logger[Symbol.for('isLoggingBackedOff')]
+        , false
+        , 'Logger is not backed off after having a successful connection'
+        )
+        tt.end()
+      })
+
+      logger.log('This will cause a server 500ish error')
     })
-    .query(() => { return true })
-    .reply(500, 'SERVER KABOOM')
-    .post('/', () => {
-      t.equal(
-        logger[Symbol.for('isLoggingBackedOff')]
-      , true
-      , 'Logger is backed off'
-      )
-      return true
+  })
+
+  t.end()
+})
+
+test('Connection-based error codes trigger a retry', (t) => {
+  const logger = new Logger(apiKey, createOptions({
+    baseBackoffMs: 50
+  , maxBackoffMs: 100
+  }))
+
+  const codes = [
+    'ECONNABORTED'
+  , 'ECONNRESET'
+  , 'EADDRINUSE'
+  , 'ECONNREFUSED'
+  , 'EPIPE'
+  , 'ENOTFOUND'
+  , 'ENETUNREACH'
+  ]
+
+  codes.forEach((code) => {
+    t.test(`Testing with connection error: ${code}`, (tt) => {
+      let attempts = 0
+
+      tt.on('end', async () => {
+        nock.cleanAll()
+        logger.removeAllListeners()
+      })
+
+      // Fail 3 times, then succeed
+      nock(logger.url)
+        .post('/', () => {
+          tt.equal(
+            logger[Symbol.for('isLoggingBackedOff')]
+          , false
+          , 'Logger is not backed off prior to the first failure'
+          )
+          return true
+        })
+        .query(() => { return true })
+        .replyWithError({code})
+        .post('/', () => {
+          tt.equal(
+            logger[Symbol.for('isLoggingBackedOff')]
+          , true
+          , 'Logger is backed off'
+          )
+          return true
+        })
+        .query(() => { return true })
+        .replyWithError({code})
+        .post('/', () => { return true })
+        .query(() => { return true })
+        .replyWithError({code})
+        .post('/', () => { return true })
+        .query(() => { return true })
+        .reply(200, 'Success')
+
+      logger.on('error', (err) => {
+        tt.type(err, Error, 'Error type is emitted')
+        tt.match(err, {
+          message: 'An error occured while sending logs to the cloud.'
+        , meta: {
+            actual: undefined
+          , code
+          , firstLine: 'This will cause an HTTP connection error'
+          , lastLine: null
+          , retrying: true
+          , attempts: ++attempts
+          }
+        }, `Error properties are correct for attempt ${attempts}`)
+      })
+
+      logger.on('cleared', ({message}) => {
+        tt.equal(message, 'All accumulated log entries have been sent', 'cleared msg')
+        tt.equal(
+          logger[Symbol.for('isLoggingBackedOff')]
+        , false
+        , 'Logger is not backed off after having a successful connection'
+        )
+        tt.end()
+      })
+
+      logger.log('This will cause an HTTP connection error')
     })
-    .query(() => { return true })
-    .reply(500, 'SERVER KABOOM')
-    .post('/', () => { return true })
-    .query(() => { return true })
-    .reply(500, 'SERVER KABOOM')
-    .post('/', () => { return true })
-    .query(() => { return true })
-    .reply(200, 'Success')
-
-  logger.on('error', (err) => {
-    t.type(err, Error, 'Error type is emitted')
-    t.match(err, {
-      message: 'An error occured while sending logs to the cloud.'
-    , meta: {
-        actual: 'Request failed with status code 500'
-      , code: 500
-      , firstLine: 'This will cause an HTTP timeout'
-      , lastLine: null
-      , retrying: true
-      , attempts: ++attempts
-      }
-    }, `Error properties are correct for attempt ${attempts}`)
   })
 
-  logger.on('cleared', ({message}) => {
-    t.equal(message, 'All accumulated log entries have been sent', 'cleared msg')
-    t.equal(
-      logger[Symbol.for('isLoggingBackedOff')]
-    , false
-    , 'Logger is not backed off after having a successful connection'
-    )
-    t.end()
-  })
-
-  logger.log('This will cause an HTTP timeout')
+  t.end()
 })
 
 test('User-level errors are discarded after emitting an error', (t) => {

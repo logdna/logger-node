@@ -373,8 +373,24 @@ When the send queue is empty, `cleared` is emitted.
 
 ### Handling Errors
 
-* `timeout` or `500` errors will be retried using an [exponential backoff strategy](#exponential-backoff-strategy), but will
+* Connection-based errors or `500`-level response status codes will be retried using an [exponential backoff strategy](#exponential-backoff-strategy), but will
   also emit `error` events along the way.
+    * Connection error codes that will retry:
+      `ECONNABORTED` (timeout),
+      `ECONNRESET`,
+      `EADDRINUSE`,
+      `ECONNREFUSED`,
+      `EPIPE`,
+      `ENOTFOUND`,
+      `ENETUNREACH`
+    * HTTP status codes that will retry:
+      `500`,
+      `502`,
+      `503`,
+      `504`,
+      `521`,
+      `522`,
+      `524`
 * User-level errors (such as `400`) will not be retried because they most likely would never be successful (if the message is deemed invalid),
   and `error` events are emitted for these errors, also.
 
