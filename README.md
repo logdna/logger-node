@@ -21,6 +21,7 @@
         * [Error while sending to LogDNA](#error-while-sending-to-logdna)
         * [Error while calling `log()`](#error-while-calling-log)
         * [Error due to `payloadStructure` mismatch](#error-due-to-payloadstructure-mismatch)
+        * [Error for a `207` (partial success) response](#error-for-a-207-partial-success-response)
     * [removeMetaProperty](#event-removeMetaProperty)
     * [send](#event-send)
     * [warn](#event-warn)
@@ -148,7 +149,7 @@ then the message will be `'All accumulated log entries have been sent'`. If ther
 
 * [`<TypeError>`][] | [`<Error>`][]
     * `message` [`<String>`][] - The error message
-    * `meta` [`<String>`][] - Meta object populated with different information depending on the error
+    * `meta` [`<Object>`][] - Meta object populated with different information depending on the error
 
 This event is emitted when an asynchronous error is encountered. Depending on the context, `meta` will contain
 different pieces of information about the error.
@@ -183,6 +184,16 @@ Keep in mind that `agentLog()` is reserved for LogDNA systems and is not intende
 * `message` [`<String>`][] - Static message of `Invalid method based on payloadStructure`
 * `payloadStructure` [`<String>`][] - The current payload structure value that is set on the instance
 * `expected` [`<String>`][] - The expected payload structure to be able to call the method.
+
+#### Error for a `207` (partial success) response
+
+If a `207` status code is received, this means that some of the lines failed to be ingested.  An `error` event is emitted for each
+failed line and will have the following structure:
+
+* `message` [`<String>`][] - Static message: `Non-200 status while ingesting this line`
+* `meta` [`<Object>`][] - Details about the failed line
+    * `statusCode` [`<Number>`][] - The http status code for the failed line
+    * `line` [`<String>`][] - The line that failed to be ingested
 
 ### Event: `'removeMetaProperty'`
 
@@ -373,6 +384,10 @@ When the send queue is empty, `cleared` is emitted.
 
 ### Handling Errors
 
+* If a `207` status code was received, this means that at least one line failed ingestion. Each offending line and its status code
+  will be emitted as [an error](#error-for-a-207-partial-success-response).
+* User-level errors (such as `400`) will not be retried because they most likely would never be successful (if the message is deemed invalid),
+  and `error` events are emitted for these errors, also.
 * Connection-based errors or `500`-level response status codes will be retried using an [exponential backoff strategy](#exponential-backoff-strategy), but will
   also emit `error` events along the way.
     * Connection error codes that will retry:
@@ -391,8 +406,6 @@ When the send queue is empty, `cleared` is emitted.
       `521`,
       `522`,
       `524`
-* User-level errors (such as `400`) will not be retried because they most likely would never be successful (if the message is deemed invalid),
-  and `error` events are emitted for these errors, also.
 
 ## Exponential Backoff Strategy
 

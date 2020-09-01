@@ -368,3 +368,76 @@ test('.agentLog() warns if line is blank', async (t) => {
     })
   })
 })
+
+test('.agentLog() payload format handles 207 partial-success responses and emits errors', (t) => {
+  t.plan(5)
+
+  const logger = new Logger(apiKey, createOptions({
+    payloadStructure: 'agent'
+  , flushIntervalMs: 500
+  }))
+  const lines = [
+    'This is the first line, which will succeeed'
+  , 'THIS LINE WILL FAIL'
+  , 'This line should succeed'
+  , 'THIS LINE WILL FAIL TOO'
+  ]
+
+  t.on('end', async () => {
+    nock.cleanAll()
+  })
+
+  nock(logger.url)
+    .post('/', (body) => {
+      const payload = body.ls
+      t.equal(payload.length, 4, 'Payload has the right number of entries')
+      t.match(payload, [
+        {line: lines[0]}
+      , {line: lines[1]}
+      , {line: lines[2]}
+      , {line: lines[3]}
+      ])
+      return true
+    })
+    .query(() => { return true })
+    .reply(207, {status: [200, 400, 200, 418]})
+
+  logger.on('error', (err) => {
+    if (err.meta.line !== lines[1]) return
+    t.deepEqual(err, {
+      name: 'Error'
+    , message: 'Non-200 status while ingesting this line'
+    , meta: {
+        statusCode: 400
+      , line: lines[1]
+      }
+    }, 'Got an error event for line 2')
+  })
+
+  logger.on('error', (err) => {
+    if (err.meta.line !== lines[3]) return
+    t.deepEqual(err, {
+      name: 'Error'
+    , message: 'Non-200 status while ingesting this line'
+    , meta: {
+        statusCode: 418
+      , line: lines[3]
+      }
+    }, 'Got an error event for line 4')
+  })
+
+  logger.on('send', (obj) => {
+    t.deepEqual(obj, {
+      httpStatus: 207
+    , firstLine: lines[0]
+    , lastLine: lines[3]
+    , totalLinesSent: 2
+    , totalLinesReady: 0
+    , bufferCount: 0
+    }, 'Got send event')
+  })
+
+  for (const line of lines) {
+    logger.agentLog({line})
+  }
+})
