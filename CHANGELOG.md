@@ -2,6 +2,11 @@
 
 This file documents all notable changes in the`LogDNA Node.js logger package`. The release numbering uses [semantic versioning](http://semver.org).
 
+## [1.2.0] - September 2, 2020
+### Added
+* Added additional error codes and statuses that trigger HTTP retries
+* Added support for a `207` (partial success) response.  Lines which errored will emit an `error` event.
+
 ## [1.1.0] - August 31, 2020
 ### Added
 * Added a log method (`agentLog`) intended for LogDNA usage only. This will handle logging from our agent.
@@ -43,6 +48,7 @@ This file documents all notable changes in the`LogDNA Node.js logger package`. T
 * Added a loadtest.js test to ensure there is not data loss
 * Exponential Backoff with Jitter algorithm implemented for HTTP retries
 
+[1.2.0]: https://github.com/logdna/logger-node/compare/1.1.0...1.2.0
 [1.1.0]: https://github.com/logdna/logger-node/compare/1.0.1...1.1.0
 [1.0.1]: https://github.com/logdna/logger-node/compare/1.0.0...1.0.1
 [1.0.0]: https://github.com/logdna/logger-node/tree/1.0.0
