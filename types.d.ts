@@ -1,4 +1,4 @@
-declare module "logdna" {
+declare module "@logdna/logger" {
   enum LogLevel {
     trace,
     debug,
