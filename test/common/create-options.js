@@ -17,12 +17,13 @@ module.exports = function createOptions({
 , shimProperties
 , env = undefined
 , withCredentials = null
-, url = `http://localhost:${port}`
+, url = `https://localhost:${port}`
 , baseBackoffMs = undefined
 , maxBackoffMs = undefined
 , meta = undefined
 , payloadStructure = undefined
 , compress = undefined
+, proxy = undefined
 } = {}) {
   return {
     key
@@ -46,5 +47,6 @@ module.exports = function createOptions({
   , meta
   , payloadStructure
   , compress
+  , proxy
   }
 }

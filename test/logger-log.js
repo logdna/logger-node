@@ -1,5 +1,7 @@
 'use strict'
 
+const http = require('http')
+const net = require('net')
 const {test} = require('tap')
 const stringify = require('json-stringify-safe')
 const nock = require('nock')
@@ -760,7 +762,7 @@ test('removeMetaProperty() removes it from the payload; indexMeta: false', (t) =
 test('Can call .log with HTTP (not https)', (t) => {
   t.plan(2)
   const logger = new Logger(apiKey, createOptions({
-    protocol: 'http'
+    url: 'http://localhost:12345'
   }))
   t.equal(logger[Symbol.for('requestDefaults')].useHttps, false, 'HTTPS is off')
   t.on('end', async () => {
@@ -1034,4 +1036,79 @@ test('207 partial-success responses can be parsed without status codes', (t) => 
   for (const line of lines) {
     logger.info(line)
   }
+})
+
+test('Can proxy to an ingestion endpoint through an http proxy', (t) => {
+  t.plan(5)
+  nock.enableNetConnect() // This is needed for the real servers
+  const now = Date.now()
+
+  const ingestServer = http.createServer((req, res) => {
+    let received = ''
+    let parsed
+    req.on('data', (chunk) => {
+      received += chunk.toString()
+    })
+    req.on('end', () => {
+      res.end()
+      t.pass('Ingester received a connection through the proxy')
+      try {
+        parsed = JSON.parse(received)
+      } catch (err) {
+        t.comment(`Bad JSON: ${received}`)
+        t.fail(`Error parsing JSON: ${err.message}`)
+      }
+      t.deepEqual(parsed, {
+        e: 'ls'
+      , ls: [
+          {
+            timestamp: now
+          , line: 'some log line'
+          , level: 'INFO'
+          , app: 'myapp'
+          , meta: '{}'
+          }
+        ]
+      }, 'Ingester payload is correct')
+    })
+  })
+
+  const proxyServer = http.createServer()
+  proxyServer.on('connect', (req, clientSocket, head) => {
+    // https://nodejs.org/api/http.html#http_event_connect
+    t.pass('Proxy received the connection')
+    const {port, hostname} = new URL(`http://${req.url}`)
+    const serverSocket = net.connect(port || 80, hostname, () => {
+      clientSocket.write('HTTP/1.1 200 Connection Established\r\n'
+        + 'Proxy-agent: Node.js-Proxy\r\n'
+        + '\r\n')
+      serverSocket.write(head)
+      serverSocket.pipe(clientSocket)
+      clientSocket.pipe(serverSocket)
+    })
+  })
+
+  t.teardown(() => {
+    proxyServer.close()
+    ingestServer.close()
+  })
+
+  ingestServer.listen(0)
+
+  ingestServer.on('listening', () => {
+    t.pass('Ingest server listening')
+    proxyServer.listen(0)
+    proxyServer.on('listening', () => {
+      t.pass('Proxy server listening')
+      const logger = new Logger(apiKey, createOptions({
+        proxy: `http://username:pass@localhost:${proxyServer.address().port}`
+      , url: `http://localhost:${ingestServer.address().port}`
+      , app: 'myapp'
+      }))
+
+      logger.info('some log line', {
+        timestamp: now
+      })
+    })
+  })
 })

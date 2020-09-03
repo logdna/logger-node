@@ -45,7 +45,7 @@ test('Logger instance properties', async (t) => {
       propertyVals[sym.toString()] = log[sym]
     }
     const symbolCount = Object.keys(propertyVals).length
-    tt.equal(symbolCount, 13, 'The number of declared symbols')
+    tt.equal(symbolCount, 13, 'The number of declared symbols', propertyVals)
     const expected = {
       'Symbol(lineLengthTotal)': 0
     , 'Symbol(buffer)': []
@@ -82,6 +82,44 @@ test('Logger instance properties', async (t) => {
     }
     tt.equal(Object.keys(expected).length, symbolCount, 'Each symbol is tested')
     tt.match(propertyVals, expected, 'Symbol property defaults are correct')
+  })
+
+  t.test('HTTP agent is assigned correctly based on proxies or not', async (tt) => {
+    tt.test('No proxy: https url is used', async (ttt) => {
+      const logger = new Logger(apiKey, {
+        url: 'https://ingestionserver.com'
+      })
+      const agent = logger[Symbol.for('requestDefaults')].agent
+      const constructorName = Object.getPrototypeOf(agent).constructor.name
+      ttt.equal(constructorName, 'HttpsAgent', 'The agent is agentkeepalive.HttpsAgent')
+    })
+
+    tt.test('No proxy: http url is used (buyer beware!)', async (ttt) => {
+      const logger = new Logger(apiKey, {
+        url: 'http://insecureingester.com'
+      })
+      const agent = logger[Symbol.for('requestDefaults')].agent
+      const constructorName = Object.getPrototypeOf(agent).constructor.name
+      ttt.equal(constructorName, 'Agent', 'The agent is agentkeepalive.Agent')
+    })
+
+    tt.test('Insecure Proxy used: Agent should be HttpsProxyAgent', async (ttt) => {
+      const logger = new Logger(apiKey, {
+        proxy: 'http://user:pass@yourproxy.com'
+      })
+      const agent = logger[Symbol.for('requestDefaults')].agent
+      const constructorName = Object.getPrototypeOf(agent).constructor.name
+      ttt.equal(constructorName, 'HttpsProxyAgent', 'The agent is HttpsProxyAgent')
+    })
+
+    tt.test('Secure Proxy used: Agent should be HttpsProxyAgent', async (ttt) => {
+      const logger = new Logger(apiKey, {
+        proxy: 'https://user:pass@yoursecureproxy.com'
+      })
+      const agent = logger[Symbol.for('requestDefaults')].agent
+      const constructorName = Object.getPrototypeOf(agent).constructor.name
+      ttt.equal(constructorName, 'HttpsProxyAgent', 'The agent is HttpsProxyAgent')
+    })
   })
 
   t.test('Check default property values', async (tt) => {
@@ -508,6 +546,21 @@ test('Instantiation Errors', async (t) => {
     }, {
       message: 'Compression not available'
     , name: 'Error'
+    }, 'Expected error thrown')
+  })
+
+  t.test('Bad proxy value', async (tt) => {
+    const proxy = 'myproxy.myhost.com:8888'
+    tt.throws(() => {
+      return new Logger(apiKey, {
+        proxy
+      })
+    }, {
+      message: 'proxy value must be a full http or https URL'
+    , name: 'TypeError'
+    , meta: {
+        got: proxy
+      }
     }, 'Expected error thrown')
   })
 })
