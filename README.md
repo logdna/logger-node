@@ -43,6 +43,7 @@
 * **[Bunyan Stream](#bunyan-stream)**
 * **[Winston Transport](#winston-transport)**
 * **[AWS Lambda Support](#aws-lambda-support)**
+* **[Proxy Support](#proxy-support)**
 * **[License](#license)**
 
 ## Migrating From Other Versions
@@ -266,6 +267,7 @@ For those cases, additional properties (apart from `message`) are included:
     * `withCredentials` [`<Boolean>`][] - Passed to the request library to make CORS requests. **Default:** `false`
     * `payloadStructure` [`<String>`][] - (*LogDNA usage only*) Ability to specify a different payload structure for ingestion. **Default:** `default`
     * `compress` [`<Boolean>`][] - (*LogDNA usage only*) Compression support for the agent. **Default:** `false`
+    * `proxy` [`<String>`][] - The full URL of an http or https proxy to pass through
 * Throws: [`<TypeError>`][] | [`<TypeError>`][] | [`<Error>`][]
 * Returns: `Logger`
 
@@ -542,6 +544,27 @@ exports.handler = (event, context, callback) => {
 }
 ```
 
+## Proxy Support
+
+The logger supports proxying for situations such as corporate proxies that require traffic
+to be passed through them before reaching the outside world.  For such implementations,
+use the [`proxy` instantiation option](#createloggerkey-options) to set the full URL
+of the proxy.  It supports both *http* and *https* proxy URLs.  Under the hood, the logger uses
+the [https-proxy-agent](https://www.npmjs.com/package/https-proxy-agent) package for this.
+
+In this example, an http proxy (with credentials) is passed through before reaching LogDNA's
+secure ingestion endpoint:
+
+```javascript
+const {createLogger} = require('@logdna/logger')
+
+const logger = createLogger(apiKey, {
+  proxy: 'http://username:pass@yourproxy.company.com:12345'
+, app: 'myapp'
+})
+
+logger.info('Happy logging through your proxy!')
+```
 
 ## License
 
