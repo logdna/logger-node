@@ -2,6 +2,11 @@
 
 This file documents all notable changes in the`LogDNA Node.js logger package`. The release numbering uses [semantic versioning](http://semver.org).
 
+## [1.3.1] - September 9, 2020
+### Fixed
+* The Typescript definition needed to extend EventEmitter
+* Fixed the default timeout to be 30 seconds instead of 5 seconds.
+
 ## [1.3.0] - September 9, 2020
 ### Fixed
 * Corrected the module name in the Typescript definition
@@ -56,6 +61,7 @@ This file documents all notable changes in the`LogDNA Node.js logger package`. T
 * Added a loadtest.js test to ensure there is not data loss
 * Exponential Backoff with Jitter algorithm implemented for HTTP retries
 
+[1.3.1]: https://github.com/logdna/logger-node/compare/1.3.0...1.3.1
 [1.3.0]: https://github.com/logdna/logger-node/compare/1.2.0...1.3.0
 [1.2.0]: https://github.com/logdna/logger-node/compare/1.1.0...1.2.0
 [1.1.0]: https://github.com/logdna/logger-node/compare/1.0.1...1.1.0
