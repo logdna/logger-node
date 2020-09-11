@@ -251,7 +251,7 @@ For those cases, additional properties (apart from `message`) are included:
     * `level` [`<String>`][] - [Level](#supported-log-levels) to be used if not specified elsewhere. **Default:** `INFO`
     * `tags` [`<Array>`][] | [`<String>`][] - Tags to be added to each message
     * `meta` [`<Object>`][] - Global metadata. Added to each message, unless overridden.
-    * `timeout` [`<Number>`][] - Millisecond timeout for each HTTP request. **Default:** `5000`ms. **Max:** `300000`ms
+    * `timeout` [`<Number>`][] - Millisecond timeout for each HTTP request. **Default:** `30000`ms. **Max:** `300000`ms
     * `hostname` [`<String>`][] - Hostname for each HTTP request.
     * `mac` [`<String>`][] - MAC address for each HTTP request.
     * `ip` [`<String>`][] - IPv4 or IPv6 address for each HTTP request.
