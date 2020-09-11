@@ -1,4 +1,5 @@
 declare module "@logdna/logger" {
+  import { EventEmitter } from 'events';
   enum LogLevel {
     trace,
     debug,
@@ -38,7 +39,7 @@ declare module "@logdna/logger" {
     meta?: object;
   }
 
-  export interface Logger {
+  export interface Logger extends EventEmitter {
     info(statement: string | object, options?: Omit<LogOptions, 'level'>): void;
     warn(statement: string | object, options?: Omit<LogOptions, 'level'>): void;
     debug(statement: string | object, options?: Omit<LogOptions, 'level'>): void;
