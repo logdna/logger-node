@@ -2,6 +2,10 @@
 
 This file documents all notable changes in the`LogDNA Node.js logger package`. The release numbering uses [semantic versioning](http://semver.org).
 
+## [1.3.2] - September 14, 2020
+### Fixed
+* Removed `eslint` as an unnecessary `peerDependency`.  It can be in `devDependencies` only.
+
 ## [1.3.1] - September 9, 2020
 ### Fixed
 * The Typescript definition needed to extend EventEmitter
@@ -61,6 +65,7 @@ This file documents all notable changes in the`LogDNA Node.js logger package`. T
 * Added a loadtest.js test to ensure there is not data loss
 * Exponential Backoff with Jitter algorithm implemented for HTTP retries
 
+[1.3.2]: https://github.com/logdna/logger-node/compare/1.3.1...1.3.2
 [1.3.1]: https://github.com/logdna/logger-node/compare/1.3.0...1.3.1
 [1.3.0]: https://github.com/logdna/logger-node/compare/1.2.0...1.3.0
 [1.2.0]: https://github.com/logdna/logger-node/compare/1.1.0...1.2.0
