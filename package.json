@@ -37,9 +37,6 @@
     "url": "https://github.com/logdna/logger-node/issues"
   },
   "homepage": "https://github.com/logdna/logger-node#readme",
-  "peerDependencies": {
-    "eslint": ">= 6"
-  },
   "eslintConfig": {
     "root": true,
     "ignorePatterns": [
