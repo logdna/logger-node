@@ -9,7 +9,8 @@ const {apiKey, createOptions} = require('./common/index.js')
 nock.disableNetConnect()
 
 test('agentLog() success with a /var/log entry', (t) => {
-  const line = 'Aug 27 16:41:30 my-machine com.apple.xpc.launchd[1] (com.apple.mdworker.shared.0D000000-0400-0000-0000-000000000000[11142]): '
+  const line = 'Aug 27 16:41:30 my-machine com.apple.xpc.launchd[1] (com.apple.mdworker.'
+    + 'shared.0D000000-0400-0000-0000-000000000000[11142]): '
     + 'Service exited due to SIGKILL | sent by mds[116]'
   const now = Date.now()
 
@@ -56,7 +57,8 @@ test('agentLog() success with a /var/log entry', (t) => {
 })
 
 test('agentLog() success while specifying compression off', (t) => {
-  const line = 'Aug 27 16:41:30 my-machine com.apple.xpc.launchd[1] (com.apple.mdworker.shared.0D000000-0400-0000-0000-000000000000[11142]): '
+  const line = 'Aug 27 16:41:30 my-machine com.apple.xpc.launchd[1] (com.apple.mdworker.'
+    + 'shared.0D000000-0400-0000-0000-000000000000[11142]): '
     + 'Service exited due to SIGKILL | sent by mds[116]'
   const now = Date.now()
 
@@ -104,7 +106,8 @@ test('agentLog() success while specifying compression off', (t) => {
 })
 
 test('agentLog() success with k8s-style line', (t) => {
-  const line = '2020-02-01T05:15:15.000000000-0800 stdout F [200201 05:15:15] [info] {"hello":"world"}'
+  const line = '2020-02-01T05:15:15.000000000-0800 stdout F [200201 05:15:15] '
+    + '[info] {"hello":"world"}'
   const pid = 12345
   const prival = 5
   const label = 'someLabel'
@@ -161,7 +164,8 @@ test('agentLog() success with k8s-style line', (t) => {
 })
 
 test('agentLog() uses gzip compression on the payload', (t) => {
-  const line = 'Aug 27 16:41:30 my-machine com.apple.xpc.launchd[1] (com.apple.mdworker.shared.0D000000-0400-0000-0000-000000000000[11142]): '
+  const line = 'Aug 27 16:41:30 my-machine com.apple.xpc.launchd[1] (com.apple.mdworker.'
+    + 'shared.0D000000-0400-0000-0000-000000000000[11142]): '
     + 'Service exited due to SIGKILL | sent by mds[116]'
   const now = Date.now()
   const payload = {
@@ -217,7 +221,8 @@ test('agentLog() uses gzip compression on the payload', (t) => {
 })
 
 test('Error handling: when gzip fails, raw payload is sent instead', (t) => {
-  const line = 'Aug 27 16:41:30 my-machine com.apple.xpc.launchd[1] (com.apple.mdworker.shared.0D000000-0400-0000-0000-000000000000[11142]): '
+  const line = 'Aug 27 16:41:30 my-machine com.apple.xpc.launchd[1] (com.apple.mdworker.'
+    + 'shared.0D000000-0400-0000-0000-000000000000[11142]): '
     + 'Service exited due to SIGKILL | sent by mds[116]'
   const now = Date.now()
   const payload = {
@@ -369,7 +374,7 @@ test('.agentLog() warns if line is blank', async (t) => {
   })
 })
 
-test('.agentLog() payload format handles 207 partial-success responses and emits errors', (t) => {
+test('.agentLog() payload format handles 207 responses and emits errors', (t) => {
   t.plan(5)
 
   const logger = new Logger(apiKey, createOptions({
