@@ -3,3 +3,4 @@ logs
 npm-debug.log*
 coverage/
 node_modules/
+.tap-output
