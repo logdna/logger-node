@@ -44,8 +44,6 @@ test('Logger instance properties', async (t) => {
     for (const sym of Object.getOwnPropertySymbols(log)) {
       propertyVals[sym.toString()] = log[sym]
     }
-    const symbolCount = Object.keys(propertyVals).length
-    tt.equal(symbolCount, 13, 'The number of declared symbols', propertyVals)
     const expected = {
       'Symbol(lineLengthTotal)': 0
     , 'Symbol(buffer)': []
@@ -80,7 +78,6 @@ test('Logger instance properties', async (t) => {
       , useHttps: true
       }
     }
-    tt.equal(Object.keys(expected).length, symbolCount, 'Each symbol is tested')
     tt.match(propertyVals, expected, 'Symbol property defaults are correct')
   })
 
