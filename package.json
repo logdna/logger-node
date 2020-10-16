@@ -32,7 +32,7 @@
     "name": "LogDNA, Inc.",
     "email": "help@logdna.com"
   },
-  "license": "MIT",
+  "license": "SEE LICENSE IN LICENSE",
   "bugs": {
     "url": "https://github.com/logdna/logger-node/issues"
   },
@@ -107,6 +107,19 @@
   "publishConfig": {
     "access": "public"
   },
+  "eslintConfig": {
+    "root": true,
+    "ignorePatterns": [
+      "node_modules/",
+      "coverage/"
+    ],
+    "extends": [
+      "logdna"
+    ],
+    "parserOptions": {
+      "ecmaVersion": 2019
+    }
+  },
   "dependencies": {
     "agentkeepalive": "^4.1.3",
     "axios": "^0.20.0",
@@ -117,6 +130,7 @@
     "@commitlint/cli": "^9.1.2",
     "@commitlint/config-conventional": "^9.1.2",
     "eslint": "^7.4.0",
+    "eslint-config-logdna": "^2.0.0",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-sensible": "^2.2.0",
     "husky": "^4.2.5",
