@@ -1,3 +1,10 @@
+# 2020-10-16, Version 1.3.3 (Stable)
+
+* [[18f03a8d5e](https://github.com/logdna/logger-node/commit/18f03a8d5e)] - deps: Switch to eslint-config-logdna (Darin Spivey) [LOG-7630](https://logdna.atlassian.net/browse/LOG-7630)
+* [[23ae74ce3b](https://github.com/logdna/logger-node/commit/23ae74ce3b)] - fix: Add .npmignore (Darin Spivey) [LOG-7630](https://logdna.atlassian.net/browse/LOG-7630)
+* [[21747f898b](https://github.com/logdna/logger-node/commit/21747f898b)] - fix: Move from CircleCI to Jenkins for CI (Darin Spivey) [LOG-7630](https://logdna.atlassian.net/browse/LOG-7630)
+* [[c9dacac6a8](https://github.com/logdna/logger-node/commit/c9dacac6a8)] - package: bump to @logdna/logger@1.3.2 (Darin Spivey)
+
 # CHANGELOG
 
 This file documents all notable changes in the`LogDNA Node.js logger package`. The release numbering uses [semantic versioning](http://semver.org).
