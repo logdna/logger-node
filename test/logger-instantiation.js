@@ -57,6 +57,7 @@ test('Logger instance properties', async (t) => {
     , 'Symbol(backoffMs)': 3000
     , 'Symbol(payloadStructure)': 'default'
     , 'Symbol(compress)': false
+    , 'Symbol(ignoreRetryableErrors)': true
     , 'Symbol(requestDefaults)': {
         auth: {
           username: apiKey
@@ -119,7 +120,7 @@ test('Logger instance properties', async (t) => {
     })
   })
 
-  t.test('Check default property values', async (tt) => {
+  t.test('Check default property values of properties', async (tt) => {
     const log = new Logger(apiKey)
     tt.match(log, {
       flushLimit: 5000000
@@ -133,6 +134,7 @@ test('Logger instance properties', async (t) => {
     , [Symbol.for('requestDefaults')]: {
         userHttps: true
       }
+    , [Symbol.for('ignoreRetryableErrors')]: true
     })
   })
 
@@ -156,6 +158,7 @@ test('Logger instance properties', async (t) => {
     , hostname: 'bleck'
     , mac: '01:02:03:04:05:06'
     , tags: ['whiz', 'bang', 'done']
+    , ignoreRetryableErrors: false
     })
     const log = new Logger(apiKey, options)
 
@@ -181,6 +184,7 @@ test('Logger instance properties', async (t) => {
         }
       , timeout: options.timeout
       }
+    , [Symbol.for('ignoreRetryableErrors')]: false
     }
 
     tt.match(log, expected, 'Provided values were used in instantiation')

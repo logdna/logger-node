@@ -24,6 +24,7 @@ module.exports = function createOptions({
 , payloadStructure = undefined
 , compress = undefined
 , proxy = undefined
+, ignoreRetryableErrors = undefined
 } = {}) {
   return {
     key
@@ -48,5 +49,6 @@ module.exports = function createOptions({
   , payloadStructure
   , compress
   , proxy
+  , ignoreRetryableErrors
   }
 }

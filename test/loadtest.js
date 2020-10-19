@@ -42,6 +42,7 @@ test('Load test to ensure no data loss and expected payloads', async (t) => {
     , baseBackoffMs: 100
     , maxBackoffMs: 500
     , url: `http://localhost:${server.address().port}`
+    , ignoreRetryableErrors: false
     })
 
     logger.on('send', (evt) => {
@@ -60,7 +61,8 @@ test('Load test to ensure no data loss and expected payloads', async (t) => {
       errorEvents++
       tt.deepEqual(evt, {
         name: 'Error'
-      , message: 'An error occured while sending logs to the cloud.'
+      , message: 'Temporary connection-based error. It will be retried. '
+          + 'See meta data for details.'
       , meta: {
           actual: 'Request failed with status code 500'
         , code: 500
