@@ -6,6 +6,12 @@ const Logger = require('../lib/logger.js')
 const constants = require('../lib/constants.js')
 const {apiKey, createOptions} = require('./common/index.js')
 
+const RETRYABLE_MSG = 'Temporary connection-based error. It will be retried. '
+  + 'See meta data for details.'
+
+const NOT_RETRYABLE_MSG = 'A connection-based error occurred that will not be retried. '
+  + 'See meta data for details.'
+
 nock.disableNetConnect()
 
 test('Shorthand logging calls require options to be an object', (t) => {
@@ -196,11 +202,14 @@ test('removeMetaProperty emits \'warn\' if property is not found', (t) => {
 })
 
 test('HTTP timeout will emit Error and continue to retry', (t) => {
+  t.plan(10)
+
   const delay = 1000 // Set this low since nock will ultimately wait to timeout
   const logger = new Logger(apiKey, createOptions({
     baseBackoffMs: 100
   , maxBackoffMs: 500
   , timeout: delay
+  , ignoreRetryableErrors: false
   }))
   let attempts = 0
 
@@ -244,7 +253,7 @@ test('HTTP timeout will emit Error and continue to retry', (t) => {
   logger.on('error', (err) => {
     t.type(err, Error, 'Error type is emitted')
     t.deepEqual(err, {
-      message: 'An error occured while sending logs to the cloud.'
+      message: RETRYABLE_MSG
     , name: 'Error'
     , meta: {
         actual: `timeout of ${delay}ms exceeded`
@@ -264,7 +273,6 @@ test('HTTP timeout will emit Error and continue to retry', (t) => {
     , false
     , 'Logger is not backed off after having a successful connection'
     )
-    t.end()
   })
 
   logger.log('This will cause an HTTP timeout')
@@ -274,6 +282,7 @@ test('A 500-level statusCode error will continue to retry', (t) => {
   const logger = new Logger(apiKey, createOptions({
     baseBackoffMs: 50
   , maxBackoffMs: 100
+  , ignoreRetryableErrors: false
   }))
 
   const codes = [
@@ -288,6 +297,7 @@ test('A 500-level statusCode error will continue to retry', (t) => {
 
   codes.forEach((code) => {
     t.test(`Testing with statusCode: ${code}`, (tt) => {
+      tt.plan(10)
       let attempts = 0
 
       tt.on('end', async () => {
@@ -327,7 +337,7 @@ test('A 500-level statusCode error will continue to retry', (t) => {
       logger.on('error', (err) => {
         tt.type(err, Error, 'Error type is emitted')
         tt.match(err, {
-          message: 'An error occured while sending logs to the cloud.'
+          message: RETRYABLE_MSG
         , meta: {
             actual: `Request failed with status code ${code}`
           , code
@@ -346,7 +356,6 @@ test('A 500-level statusCode error will continue to retry', (t) => {
         , false
         , 'Logger is not backed off after having a successful connection'
         )
-        tt.end()
       })
 
       logger.log('This will cause a server 500ish error')
@@ -360,6 +369,7 @@ test('Connection-based error codes trigger a retry', (t) => {
   const logger = new Logger(apiKey, createOptions({
     baseBackoffMs: 50
   , maxBackoffMs: 100
+  , ignoreRetryableErrors: false
   }))
 
   const codes = [
@@ -374,6 +384,7 @@ test('Connection-based error codes trigger a retry', (t) => {
 
   codes.forEach((code) => {
     t.test(`Testing with connection error: ${code}`, (tt) => {
+      tt.plan(10)
       let attempts = 0
 
       tt.on('end', async () => {
@@ -413,7 +424,7 @@ test('Connection-based error codes trigger a retry', (t) => {
       logger.on('error', (err) => {
         tt.type(err, Error, 'Error type is emitted')
         tt.match(err, {
-          message: 'An error occured while sending logs to the cloud.'
+          message: RETRYABLE_MSG
         , meta: {
             actual: undefined
           , code
@@ -432,7 +443,6 @@ test('Connection-based error codes trigger a retry', (t) => {
         , false
         , 'Logger is not backed off after having a successful connection'
         )
-        tt.end()
       })
 
       logger.log('This will cause an HTTP connection error')
@@ -443,6 +453,7 @@ test('Connection-based error codes trigger a retry', (t) => {
 })
 
 test('User-level errors are discarded after emitting an error', (t) => {
+  t.plan(10)
   const logger = new Logger(apiKey, createOptions({
     flushLimit: 10 // one message per buffer
   }))
@@ -469,7 +480,7 @@ test('User-level errors are discarded after emitting an error', (t) => {
   logger.on('error', (err) => {
     t.type(err, Error, 'Error type is emitted')
     t.match(err, {
-      message: 'An error occured while sending logs to the cloud.'
+      message: NOT_RETRYABLE_MSG
     , meta: {
         actual: 'Request failed with status code 400'
       , code: 400
@@ -486,7 +497,6 @@ test('User-level errors are discarded after emitting an error', (t) => {
     t.equal(logger[Symbol.for('isSending')], false, 'no longer sending')
     t.equal(logger[Symbol.for('totalLinesReady')], 0, 'no more lines ready')
     t.deepEqual(logger[Symbol.for('readyToSend')], [], 'send buffer is empty')
-    t.end()
   })
 
   logger.log('Something is invalid about this line')
@@ -511,4 +521,37 @@ test('.log() rejects lines if payloadStructure is not \'default\'', (t) => {
     }, 'Expected Error is correct')
   })
   logger.log('log line')
+})
+
+test('Retry-able errors are not emitted by default', (t) => {
+  const logger = new Logger(apiKey, createOptions({
+    flushLimit: 10
+  , baseBackoffMs: 50
+  , maxBackoffMs: 100
+  }))
+  const code = 'ECONNABORTED'
+
+  t.on('end', async () => {
+    nock.cleanAll()
+  })
+
+  nock(logger.url)
+    .post('/', () => {
+      return true
+    })
+    .query(() => { return true })
+    .replyWithError({code})
+    .post('/', () => { return true })
+    .query(() => { return true })
+    .reply(200, 'Success')
+
+  logger.on('error', (err) => {
+    t.fail('Should NOT emit error', err)
+  })
+
+  logger.on('cleared', ({message}) => {
+    t.equal(message, 'All accumulated log entries have been sent', 'cleared msg')
+    t.end()
+  })
+  logger.log('This is a retryable error, but the event will NOT be emitted')
 })

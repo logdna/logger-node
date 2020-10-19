@@ -153,11 +153,16 @@ then the message will be `'All accumulated log entries have been sent'`. If ther
     * `meta` [`<Object>`][] - Meta object populated with different information depending on the error
 
 This event is emitted when an asynchronous error is encountered. Depending on the context, `meta` will contain
-different pieces of information about the error.
+different pieces of information about the error.  If the error is retry-able, the error's `message`
+property will indicate that it's a "temporary" error to avoid confusion with hard errors.
 
 #### Error while sending to LogDNA
 
-The metadata for an error encountered during an HTTP call to LogDNA will have the following `meta` properties in the error:
+**Note:** `ignoreRetryableErrors` is `true` by default, and will not emit errors when
+the `retrying` property in the metadata is `true`.  To emit all errors regardless of
+`retrying`, set `ignoreRetryableErrors: false`.
+
+The metadata for an error encountered during an HTTP call to LogDNA will have the following `meta` properties in the error.
 
 * `actual` [`<String>`][] - The raw error message from the HTTP client
 * `code` [`<String>`][] | [`<Number>`][] - The HTTP agent's "code" or `statusCode` value
@@ -268,6 +273,8 @@ For those cases, additional properties (apart from `message`) are included:
     * `payloadStructure` [`<String>`][] - (*LogDNA usage only*) Ability to specify a different payload structure for ingestion. **Default:** `default`
     * `compress` [`<Boolean>`][] - (*LogDNA usage only*) Compression support for the agent. **Default:** `false`
     * `proxy` [`<String>`][] - The full URL of an http or https proxy to pass through
+    * `ignoreRetryableErrors` [`<Boolean>`][] - Do not emit "errors" that are retry-able. Typically, theses are
+      temporary connection-based errors. **Default:** `true`
 * Throws: [`<TypeError>`][] | [`<TypeError>`][] | [`<Error>`][]
 * Returns: `Logger`
 
