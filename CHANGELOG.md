@@ -1,3 +1,7 @@
+# 2020-10-20, Version 2.0.0 (Stable)
+
+* [[c99d8b5169](https://github.com/logdna/logger-node/commit/c99d8b5169)] - **(SEMVER-MAJOR)** feat: `ignoreRetryableErrors` will not emit retry-able errors (Darin Spivey) [LOG-7639](https://logdna.atlassian.net/browse/LOG-7639)
+
 # 2020-10-16, Version 1.3.3 (Stable)
 
 * [[18f03a8d5e](https://github.com/logdna/logger-node/commit/18f03a8d5e)] - deps: Switch to eslint-config-logdna (Darin Spivey) [LOG-7630](https://logdna.atlassian.net/browse/LOG-7630)
