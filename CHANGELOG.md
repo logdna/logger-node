@@ -1,3 +1,7 @@
+# 2020-10-28, Version 2.0.1 (Stable)
+
+* [[003584ac29](https://github.com/logdna/logger-node/commit/003584ac29)] - fix: add PR validation to Jenkinsfile (Ryan Mottley) [LOG-7716](https://logdna.atlassian.net/browse/LOG-7716)
+
 # 2020-10-20, Version 2.0.0 (Stable)
 
 * [[c99d8b5169](https://github.com/logdna/logger-node/commit/c99d8b5169)] - **(SEMVER-MAJOR)** feat: `ignoreRetryableErrors` will not emit retry-able errors (Darin Spivey) [LOG-7639](https://logdna.atlassian.net/browse/LOG-7639)
