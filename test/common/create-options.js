@@ -25,6 +25,7 @@ module.exports = function createOptions({
 , compress = undefined
 , proxy = undefined
 , ignoreRetryableErrors = undefined
+, sendUserAgent = undefined
 } = {}) {
   return {
     key
@@ -50,5 +51,6 @@ module.exports = function createOptions({
   , compress
   , proxy
   , ignoreRetryableErrors
+  , sendUserAgent
   }
 }

@@ -1,7 +1,6 @@
 'use strict'
 
 const {test} = require('tap')
-const pkg = require('../package.json')
 const Logger = require('../lib/logger.js')
 const constants = require('../lib/constants.js')
 const payloads = require('../lib/payloads.js')
@@ -58,6 +57,7 @@ test('Logger instance properties', async (t) => {
     , 'Symbol(payloadStructure)': 'default'
     , 'Symbol(compress)': false
     , 'Symbol(ignoreRetryableErrors)': true
+    , 'Symbol(userAgentHeader)': constants.USER_AGENT
     , 'Symbol(requestDefaults)': {
         auth: {
           username: apiKey
@@ -65,7 +65,6 @@ test('Logger instance properties', async (t) => {
       , agent: Object
       , headers: {
           'Content-Type': 'application/json; charset=UTF-8'
-        , 'user-agent': `${pkg.name}/${pkg.version}`
         , 'Authorization': /^Basic \w+/
         }
       , qs: {
@@ -135,6 +134,7 @@ test('Logger instance properties', async (t) => {
         userHttps: true
       }
     , [Symbol.for('ignoreRetryableErrors')]: true
+    , sendUserAgent: true
     })
   })
 
@@ -159,6 +159,7 @@ test('Logger instance properties', async (t) => {
     , mac: '01:02:03:04:05:06'
     , tags: ['whiz', 'bang', 'done']
     , ignoreRetryableErrors: false
+    , sendUserAgent: false
     })
     const log = new Logger(apiKey, options)
 
@@ -185,6 +186,7 @@ test('Logger instance properties', async (t) => {
       , timeout: options.timeout
       }
     , [Symbol.for('ignoreRetryableErrors')]: false
+    , sendUserAgent: false
     }
 
     tt.match(log, expected, 'Provided values were used in instantiation')
@@ -196,7 +198,7 @@ test('Logger instance properties', async (t) => {
       UserAgent: transport
     })
     tt.equal(
-      log[Symbol.for('requestDefaults')].headers['user-agent']
+      log[Symbol.for('userAgentHeader')]
     , `${constants.USER_AGENT} (${transport})`
     , 'UserAgent parameter was combined into the user agent header'
     )

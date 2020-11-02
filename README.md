@@ -275,6 +275,10 @@ For those cases, additional properties (apart from `message`) are included:
     * `proxy` [`<String>`][] - The full URL of an http or https proxy to pass through
     * `ignoreRetryableErrors` [`<Boolean>`][] - Do not emit "errors" that are retry-able. Typically, theses are
       temporary connection-based errors. **Default:** `true`
+    * `sendUserAgent` [`<Boolean>`][] - This option controls the sending of our library's user-agent string
+      in HTTP requests to LogDNA. When this setting is `true` in a browser context, it may print a console
+      error although the payloads are still sent.  Setting this to `false` in a browser context will
+      retain the `user-agent` header of the browser. **Default:** `true`
 * Throws: [`<TypeError>`][] | [`<TypeError>`][] | [`<Error>`][]
 * Returns: `Logger`
 
