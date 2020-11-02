@@ -1112,3 +1112,76 @@ test('Can proxy to an ingestion endpoint through an http proxy', (t) => {
     })
   })
 })
+
+test('sendUserAgent is `true` by default. Custom user-agent is sent.', (t) => {
+  const logger = new Logger(apiKey, createOptions())
+  const line = 'This request contains a custom user-agent header as defined by this pkg'
+  t.plan(2)
+  t.on('end', async () => {
+    nock.cleanAll()
+  })
+
+  nock(logger.url)
+    .matchHeader('user-agent', (headerValue) => {
+      return headerValue.includes('@logdna/logger')
+    })
+    .post('/', (body) => {
+      const payload = body.ls[0]
+      t.equal(payload.line, line)
+      return true
+    })
+    .query(() => { return true })
+    .reply(200, 'Ingester response')
+
+  logger.on('send', (obj) => {
+    t.deepEqual(obj, {
+      httpStatus: 200
+    , firstLine: line
+    , lastLine: null
+    , totalLinesSent: 1
+    , totalLinesReady: 0
+    , bufferCount: 0
+    }, 'Got send event')
+  })
+  logger.log(line)
+})
+
+test('sendUserAgent is `false`. Logger client\'s user-agent value is NOT sent', (t) => {
+  const logger = new Logger(apiKey, createOptions({
+    sendUserAgent: false
+  }))
+  const line = 'This request contains the default/fallback user-agent header value'
+  t.plan(3)
+  t.on('end', async () => {
+    nock.cleanAll()
+  })
+
+  nock(logger.url)
+    .post('/', (body) => {
+      const payload = body.ls[0]
+      t.equal(payload.line, line)
+      return true
+    })
+    .query(() => { return true })
+    .reply(function(uri, requestBody, cb) {
+      // NOTE: A *real* browser would use the xhr.js adapter in axios which does NOT
+      // unconditionally set a user-agent header. However, in this case, the http
+      // adapter is being used, and it will set the agent to `axios/x.x.x` if the
+      // user-agent header is omitted. For code coverage purposes, we will leave this
+      // test even though it's not a true test of the `sendUserAgent: false` feature.
+      t.match(this.req.headers['user-agent'], /^axios/, 'Default axios header set')
+      cb(null, [200, 'Ingester response'])
+    })
+
+  logger.on('send', (obj) => {
+    t.deepEqual(obj, {
+      httpStatus: 200
+    , firstLine: line
+    , lastLine: null
+    , totalLinesSent: 1
+    , totalLinesReady: 0
+    , bufferCount: 0
+    }, 'Got send event')
+  })
+  logger.log(line)
+})
