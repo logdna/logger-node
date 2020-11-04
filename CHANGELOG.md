@@ -1,3 +1,7 @@
+# 2020-11-04, Version 2.1.0 (Stable)
+
+* [[99c12195a3](https://github.com/logdna/logger-node/commit/99c12195a3)] - **(SEMVER-MINOR)** fix: Omit user-agent header if `sendUserAgent` option is `false` (Darin Spivey) [LOG-7793](https://logdna.atlassian.net/browse/LOG-7793)
+
 # 2020-10-28, Version 2.0.1 (Stable)
 
 * [[003584ac29](https://github.com/logdna/logger-node/commit/003584ac29)] - fix: add PR validation to Jenkinsfile (Ryan Mottley) [LOG-7716](https://logdna.atlassian.net/browse/LOG-7716)
