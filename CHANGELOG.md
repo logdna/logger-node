@@ -1,3 +1,7 @@
+# 2020-11-20, Version 2.1.1 (Stable)
+
+* [[41f5dc525e](https://github.com/logdna/logger-node/commit/41f5dc525e)] - fix: Add `sendUserAgent` to `types.d.ts` (Alan Chen)
+
 # 2020-11-04, Version 2.1.0 (Stable)
 
 * [[99c12195a3](https://github.com/logdna/logger-node/commit/99c12195a3)] - **(SEMVER-MINOR)** fix: Omit user-agent header if `sendUserAgent` option is `false` (Darin Spivey) [LOG-7793](https://logdna.atlassian.net/browse/LOG-7793)
