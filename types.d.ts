@@ -27,6 +27,7 @@ declare module "@logdna/logger" {
     baseBackoffMs?: number;
     maxBackoffMs?: number;
     withCredentials?: boolean;
+    sendUserAgent?: boolean;
   }
 
   interface LogOptions {
