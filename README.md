@@ -42,7 +42,7 @@
 * **[Client Side Support](#client-side)**
 * **[Bunyan Stream](#bunyan-stream)**
 * **[Winston Transport](#winston-transport)**
-* **[AWS Lambda Support](#aws-lambda-support)**
+* **[Using with AWS Lambda](#using-with-aws-lambda)**
 * **[Proxy Support](#proxy-support)**
 * **[License](#license)**
 
@@ -435,8 +435,8 @@ if the HTTP calls becomes successful, they will begin to send immediately, and w
 
 * The client is optimized for high throughput. Using a single instance is no problem, but multiple instances can be created with the same key if desired.
 * Set up an `error` listener so that your app is aware of problems. Things like HTTP errors are emitted this way.
-* When shutting down your application, ensure all log entries are cleared. Services like AWS Lambda can buffer log entries,
-  so it might be worthwhile to pause for a short time before exiting like in the following example:
+* When shutting down your application, ensure all log entries are flushed by waiting for a final `cleared`
+  event during shutdown:
 
 ```javascript
 const {createLogger} = require('@logdna/logger')
@@ -446,15 +446,17 @@ const logger = createLogger('<YOUR KEY HERE>')
 
 logger.on('error', console.error)
 
-async function clearLogger() {
-  logger.flush()
-  await once(logger, 'cleared')
-  // Everything clear.  Did Lambda buffer anything?
-  await sleep(1000)
-  logger.flush()
+function onSignal(signal) {
+  logger.warn({signal}, 'received signal, shutting down')
+  shutdown()
+}
+
+async function shutdown() {
   await once(logger, 'cleared')
 }
 
+process.on('SIGTERM', onSignal)
+process.on('SIGINT', onSignal)
 ```
 
 ## Client Side
@@ -500,58 +502,54 @@ For Bunyan Stream support, reference our [logdna-bunyan](https://github.com/logd
 
 For Winston support, reference our [logdna-winston](https://github.com/logdna/logdna-winston/) module.
 
-## AWS Lambda Support
+## Using with AWS Lambda
 
-AWS Lambda allows users to add logging statements to their Lambda Functions. You can choose to setup the logger
-as shown above, or you can override the `console.log` and `console.error` statements. AWS Lambda overrides the `console.log`,
-`console.error`, `console.warn`, and `console.info` functions as indicated
-[here](http://docs.aws.amazon.com/lambda/latest/dg/nodejs-prog-model-logging.html), within the scope of the handler (main)
-function. You can setup an override as follows:
+AWS Lambda relays `stdout` and `stderr` output from your function's code to CloudWatch, 
+but you can easily set up a `Logger` instance as shown above to send logs to LogDNA instead. 
+If you have existing code that uses `console.log` and `console.error` statements, you can
+also override these `console` methods to send output to LogDNA without changing your code:
 
 ```javascript
 'use strict'
 
-const https = require('https')
-const Logger = require('@logdna/logger')
+const {once} = require('events')
+const {createLogger} = require('@logdna/logger')
 
 const options = {
   env: 'env'
 , app: 'lambda-app'
 , hostname: 'lambda-test'
-, indexMeta: true
+}
+const logger = createLogger('API KEY HERE', options)
+
+// Override console methods to send logs to both LogDNA and stdout/stderr
+const {
+  log: consoleLog
+, error: consoleError
+} = console
+
+console.log = function(message, ...args) {
+  logger.log(message)
+  consoleLog(message, ...args)
 }
 
-const _log = console.log
-const _error = console.error
-
-const logger = Logger.setupDefaultLogger('YOUR API KEY', options)
-
-function log(...args) {
-  logger.log.apply(args)
-  _log.apply(...args)
+console.error = function(message, ...args) {
+  logger.error(message)
+  consoleError(message, ...args)
 }
 
-function error(...args) {
-  logger.error.apply(args)
-  _error.apply(args)
-}
-
-/**
- * Pass the data to send as `event.data`, and the request options as
- * `event.options`. For more information see the HTTPS module documentation
- * at https://nodejs.org/api/https.html.
- *
- * Will succeed with the response body.
- */
-exports.handler = (event, context, callback) => {
-  console.log = log
-  console.error = error
-
+exports.handler = async function handler(event, context) {  
+  logger.on('error', consoleError)
+  
   // Your code here
-  console.log('How bout normal log')
-  console.error('Try an error')
+  console.log('Informational log')
+  console.log({
+    example: 'this is a sample object log'
+  })
+  console.error('Error log')
 
-  callback()
+  // Ensure logs have been flushed to LogDNA before finishing
+  await once(logger, 'cleared')
 }
 ```
 
