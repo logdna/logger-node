@@ -1,3 +1,7 @@
+# 2020-12-17, Version 2.1.2 (Stable)
+
+* [[4b012a8835](https://github.com/logdna/logger-node/commit/4b012a8835)] - fix(docs): update example of using Logger on AWS Lambda (Mike Del Tito)
+
 # 2020-11-20, Version 2.1.1 (Stable)
 
 * [[41f5dc525e](https://github.com/logdna/logger-node/commit/41f5dc525e)] - fix: Add `sendUserAgent` to `types.d.ts` (Alan Chen)
