@@ -1,3 +1,7 @@
+# 2021-01-05, Version 2.1.3 (Stable)
+
+* [[a5caa19ba0](https://github.com/logdna/logger-node/commit/a5caa19ba0)] - package: bump to axios@0.21.1 (Tran Minh Nhut)
+
 # 2020-12-17, Version 2.1.2 (Stable)
 
 * [[4b012a8835](https://github.com/logdna/logger-node/commit/4b012a8835)] - fix(docs): update example of using Logger on AWS Lambda (Mike Del Tito)
