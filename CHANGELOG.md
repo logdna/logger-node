@@ -1,3 +1,8 @@
+# 2021-01-19, Version 2.2.0 (Stable)
+
+* [[c84b073d95](https://github.com/logdna/logger-node/commit/c84b073d95)] - deps: eslint-config-logdna@4.0.2 (Darin Spivey)
+* [[5be9d49bfc](https://github.com/logdna/logger-node/commit/5be9d49bfc)] - **(SEMVER-MINOR)** feat: Add more context (headers) to the errors (Darin Spivey)
+
 # 2021-01-05, Version 2.1.3 (Stable)
 
 * [[a5caa19ba0](https://github.com/logdna/logger-node/commit/a5caa19ba0)] - package: bump to axios@0.21.1 (Tran Minh Nhut)
