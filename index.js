@@ -4,7 +4,7 @@ const Logger = require('./lib/logger.js')
 
 let singleton
 
-const setupDefaultLogger = function(key, opts) {
+function setupDefaultLogger(key, opts) {
   if (singleton) return singleton
   singleton = new Logger(key, opts)
   return singleton
