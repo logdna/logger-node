@@ -32,7 +32,7 @@ test('Test all log levels, including send events', async (t) => {
       const scope = nock(opts.url)
         .post('/', (body) => {
           const numProps = Object.keys(body).length
-          tt.equal(numProps, 2, 'Number of request body properties')
+          tt.strictEqual(numProps, 2, 'Number of request body properties')
           tt.match(body, {
             e: 'ls'
           , ls: [
@@ -45,7 +45,7 @@ test('Test all log levels, including send events', async (t) => {
               }
             ]
           })
-          tt.equal(body.ls.length, 1, 'log line count')
+          tt.strictEqual(body.ls.length, 1, 'log line count')
           return true
         })
         .query((qs) => {
@@ -93,7 +93,7 @@ test('Using an https:// url sends and https agent', (t) => {
   nock(logger.url)
     .post('/', (body) => {
       const payload = body.ls[0]
-      t.equal(payload.line, 'This is over HTTPS', 'Log text was passed in body')
+      t.strictEqual(payload.line, 'This is over HTTPS', 'Log text was passed in body')
       return true
     })
     .query(() => { return true })
@@ -123,8 +123,8 @@ test('log() can be called by itself without using a level shortcut', (t) => {
   nock(logger.url)
     .post('/', (body) => {
       const payload = body.ls[0]
-      t.equal(payload.line, 'Hi there', 'Log text was passed in body')
-      t.equal(payload.level, 'INFO', 'Default level was used')
+      t.strictEqual(payload.line, 'Hi there', 'Log text was passed in body')
+      t.strictEqual(payload.level, 'INFO', 'Default level was used')
       return true
     })
     .query((qs) => {
@@ -196,7 +196,7 @@ test('log() can be passed an object to log, and serialization is "safe"', (t) =>
   nock(logger.url)
     .post('/', (body) => {
       const line = body.ls[0].line
-      t.equal(line, expected, 'Object was serialized safely')
+      t.strictEqual(line, expected, 'Object was serialized safely')
       return true
     })
     .query(() => { return true })
@@ -227,7 +227,7 @@ test('log() can be called with level (case insensitive) as an opts string', (t) 
   nock(logger.url)
     .post('/', (body) => {
       const payload = body.ls[0]
-      t.equal(payload.level, 'DEBUG', 'Level is correct')
+      t.strictEqual(payload.level, 'DEBUG', 'Level is correct')
       return true
     })
     .query(() => { return true })
@@ -327,7 +327,7 @@ test('Using global meta in combination with per-message meta', (t) => {
       , two: 'TWO'
       , three: 3
       }
-      t.equal(
+      t.strictEqual(
         payload.meta
       , JSON.stringify(expectedMeta)
       , 'per-message meta was merged with global meta'
@@ -366,7 +366,7 @@ test('Using opts.context will replace opts.meta', (t) => {
   nock(logger.url)
     .post('/', (body) => {
       const payload = body.ls[0]
-      t.equal(payload.meta, JSON.stringify(opts.context), 'Context replaced meta')
+      t.strictEqual(payload.meta, JSON.stringify(opts.context), 'Context replaced meta')
       return true
     })
     .query(() => { return true })
@@ -400,7 +400,7 @@ test('opts.context is ignored when it\'s not an object', (t) => {
   nock(logger.url)
     .post('/', (body) => {
       const payload = body.ls[0]
-      t.equal(payload.meta, JSON.stringify({inMeta: true}), 'Context ignored')
+      t.strictEqual(payload.meta, JSON.stringify({inMeta: true}), 'Context ignored')
       return true
     })
     .query(() => { return true })
@@ -640,7 +640,7 @@ test('addMetaProperty() adds it to each message; indexMeta: false', (t) => {
   nock(logger.url)
     .post('/', (body) => {
       const payload = body.ls[0]
-      t.equal(
+      t.strictEqual(
         payload.meta
       , '{"metaProp":"metaVal"}'
       , 'meta property injected into message payload'
@@ -736,7 +736,7 @@ test('removeMetaProperty() removes it from the payload; indexMeta: false', (t) =
   nock(logger.url)
     .post('/', (body) => {
       const payload = body.ls[0]
-      t.equal(payload.meta
+      t.strictEqual(payload.meta
       , '{"one":1,"three":3}'
       , 'meta property was removed from the message payload'
       )
@@ -764,7 +764,7 @@ test('Can call .log with HTTP (not https)', (t) => {
   const logger = new Logger(apiKey, createOptions({
     url: 'http://localhost:12345'
   }))
-  t.equal(logger[Symbol.for('requestDefaults')].useHttps, false, 'HTTPS is off')
+  t.strictEqual(logger[Symbol.for('requestDefaults')].useHttps, false, 'HTTPS is off')
   t.on('end', async () => {
     nock.cleanAll()
   })
@@ -800,7 +800,7 @@ test('Flushing on a timer includes multiple lines', (t) => {
   nock(logger.url)
     .post('/', (body) => {
       const payload = body.ls
-      t.equal(payload.length, 3, 'Payload has the right number of entries')
+      t.strictEqual(payload.length, 3, 'Payload has the right number of entries')
       t.match(payload, [
         {
           timestamp: Number
@@ -914,7 +914,7 @@ test('flush() can be called any time, and always emits \'cleared\'', (t) => {
   const logger = new Logger(apiKey, createOptions())
 
   logger.on('cleared', ({message}) => {
-    t.equal(message, 'All buffers clear; Nothing to send', 'Got cleared event')
+    t.strictEqual(message, 'All buffers clear; Nothing to send', 'Got cleared event')
   })
 
   logger.flush()
@@ -942,7 +942,7 @@ test('207 partial-success responses emit errors for the failed lines', (t) => {
   nock(logger.url)
     .post('/', (body) => {
       const payload = body.ls
-      t.equal(payload.length, 4, 'Payload has the right number of entries')
+      t.strictEqual(payload.length, 4, 'Payload has the right number of entries')
       t.match(payload, [
         {line: lines[0]}
       , {line: lines[1]}
@@ -1127,7 +1127,7 @@ test('sendUserAgent is `true` by default. Custom user-agent is sent.', (t) => {
     })
     .post('/', (body) => {
       const payload = body.ls[0]
-      t.equal(payload.line, line)
+      t.strictEqual(payload.line, line)
       return true
     })
     .query(() => { return true })
@@ -1159,7 +1159,7 @@ test('sendUserAgent is `false`. Logger client\'s user-agent value is NOT sent', 
   nock(logger.url)
     .post('/', (body) => {
       const payload = body.ls[0]
-      t.equal(payload.line, line)
+      t.strictEqual(payload.line, line)
       return true
     })
     .query(() => { return true })

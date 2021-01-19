@@ -264,7 +264,11 @@ test('Error handling: when gzip fails, raw payload is sent instead', (t) => {
       return true
     })
     .reply(function(uri, requestBody, cb) {
-      t.equal(this.req.headers['Content-Encoding'], undefined, 'Gzip header was removed')
+      t.strictEqual(
+        this.req.headers['Content-Encoding']
+      , undefined
+      , 'Gzip header was removed'
+      )
       cb(null, [200, 'Ingester Success'])
     })
 
@@ -395,7 +399,7 @@ test('.agentLog() payload format handles 207 responses and emits errors', (t) =>
   nock(logger.url)
     .post('/', (body) => {
       const payload = body.ls
-      t.equal(payload.length, 4, 'Payload has the right number of entries')
+      t.strictEqual(payload.length, 4, 'Payload has the right number of entries')
       t.match(payload, [
         {line: lines[0]}
       , {line: lines[1]}

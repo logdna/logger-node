@@ -79,10 +79,10 @@ test('Load test to ensure no data loss and expected payloads', async (t) => {
       // Based on the payload size, and the given instantiation options for
       // buffer size, etc, we can know how many HTTP calls and events we
       // can expect to have happened.
-      tt.equal(linesReceived, TOTAL_LINES, 'Lines sent equals lines received')
-      tt.equal(httpCalls, 19, 'HTTP call count (including errors) is correct')
-      tt.equal(sendEvents, 10, '\'send\' event count does not include errors')
-      tt.equal(errorEvents, 9, 'Expected error count')
+      tt.strictEqual(linesReceived, TOTAL_LINES, 'Lines sent equals lines received')
+      tt.strictEqual(httpCalls, 19, 'HTTP call count (including errors) is correct')
+      tt.strictEqual(sendEvents, 10, '\'send\' event count does not include errors')
+      tt.strictEqual(errorEvents, 9, 'Expected error count')
       logger.removeAllListeners()
       server.close(() => {
         tt.end()
