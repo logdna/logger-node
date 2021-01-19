@@ -1,7 +1,9 @@
 'use strict'
 
+const querystring = require('querystring')
 const {test} = require('tap')
 const nock = require('nock')
+const pkg = require('../package.json')
 const Logger = require('../lib/logger.js')
 const constants = require('../lib/constants.js')
 const {apiKey, createOptions} = require('./common/index.js')
@@ -217,6 +219,8 @@ test('HTTP timeout will emit Error and continue to retry', (t) => {
     nock.cleanAll()
   })
 
+  let url // We're strictly asserting the url, so this changes every time
+
   // Fail 3 times, then succeed. FYI, the axios agent treats a timeout on connection
   // the same as a timeout on response body (connection accepted; no reply)
   nock(logger.url)
@@ -228,7 +232,10 @@ test('HTTP timeout will emit Error and continue to retry', (t) => {
       )
       return true
     })
-    .query(() => { return true })
+    .query((qs) => {
+      url = logger.url + '?' + querystring.stringify(qs)
+      return true
+    })
     .delayConnection(delay + 1)
     .reply(200, 'Will Not Happen')
     .post('/', () => {
@@ -239,16 +246,27 @@ test('HTTP timeout will emit Error and continue to retry', (t) => {
       )
       return true
     })
-    .query(() => { return true })
+    .query((qs) => {
+      url = logger.url + '?' + querystring.stringify(qs)
+      return true
+    })
     .delayConnection(delay + 1)
     .reply(200, 'Will Not Happen')
     .post('/', () => { return true })
-    .query(() => { return true })
+    .query((qs) => {
+      url = logger.url + '?' + querystring.stringify(qs)
+      return true
+    })
     .delayConnection(delay + 1)
     .reply(200, 'Will Not Happen')
     .post('/', () => { return true })
     .query(() => { return true })
     .reply(200, 'Success')
+
+  const expectedHeaders = {
+    'Content-Type': 'application/json; charset=UTF-8'
+  , 'user-agent': `${pkg.name}/${pkg.version}`
+  }
 
   logger.on('error', (err) => {
     t.type(err, Error, 'Error type is emitted')
@@ -262,6 +280,8 @@ test('HTTP timeout will emit Error and continue to retry', (t) => {
       , lastLine: null
       , retrying: true
       , attempts: ++attempts
+      , headers: expectedHeaders
+      , url
       }
     }, `Error properties are correct for attempt ${attempts}`)
   })
