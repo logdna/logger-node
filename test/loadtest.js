@@ -59,7 +59,7 @@ test('Load test to ensure no data loss and expected payloads', async (t) => {
 
     logger.on('error', (evt) => {
       errorEvents++
-      tt.deepEqual(evt, {
+      tt.match(evt, {
         name: 'Error'
       , message: 'Temporary connection-based error. It will be retried. '
           + 'See meta data for details.'
