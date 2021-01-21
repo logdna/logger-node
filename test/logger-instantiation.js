@@ -161,7 +161,7 @@ test('Logger instance properties', async (t) => {
     , meta: {hey: 'there'}
     , hostname: 'bleck'
     , mac: '01:02:03:04:05:06'
-    , tags: ['whiz', 'bang', 'done']
+    , tags: ['whiz', null, undefined, '', ' ', '\t', '\n', 'bang', 'done', 1234, 0]
     , ignoreRetryableErrors: false
     , sendUserAgent: false
     })
@@ -178,22 +178,29 @@ test('Logger instance properties', async (t) => {
     , env: options.env
     , app: options.app
     , url: options.url
-    , [Symbol.for('requestDefaults')]: {
-        withCredentials: options.withCredentials
-      , useHttps: false
-      , qs: {
-          hostname: options.hostname
-        , mac: options.mac
-        , ip: ipv6
-        , tags: options.tags
-        }
-      , timeout: options.timeout
-      }
-    , [Symbol.for('ignoreRetryableErrors')]: false
     , sendUserAgent: false
     }
 
     tt.match(log, expected, 'Provided values were used in instantiation')
+
+    const requestDefaults = log[Symbol.for('requestDefaults')]
+    tt.match(requestDefaults, {
+      withCredentials: options.withCredentials
+    , useHttps: false
+    , qs: {
+        hostname: options.hostname
+      , mac: options.mac
+      , ip: ipv6
+      , tags: 'whiz,bang,done,1234,0'
+      }
+    , timeout: options.timeout
+    }, 'requestDefaults are correct')
+
+    tt.strictEqual(
+      log[Symbol.for('ignoreRetryableErrors')]
+    , false
+    , 'ignoreRetryableErrors was set correctly'
+    )
   })
 
   t.test('UserAgent passed from a transport is included', async (tt) => {
