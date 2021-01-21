@@ -522,30 +522,6 @@ test('Instantiation Errors', async (t) => {
     }, 'Expected error thrown')
   })
 
-  t.test('app name is too long', async (tt) => {
-    const app = 'x'.repeat(constants.MAX_INPUT_LENGTH) + 1
-    tt.throws(() => {
-      return new Logger(apiKey, {
-        app
-      })
-    }, {
-      message: 'app cannot be longer than 80 chars'
-    , name: 'TypeError'
-    }, 'Expected error thrown')
-  })
-
-  t.test('env name is too long', async (tt) => {
-    const env = 'x'.repeat(constants.MAX_INPUT_LENGTH) + 1
-    tt.throws(() => {
-      return new Logger(apiKey, {
-        env
-      })
-    }, {
-      message: 'env cannot be longer than 80 chars'
-    , name: 'TypeError'
-    }, 'Expected error thrown')
-  })
-
   t.test('Bad payloadStructure', async (tt) => {
     tt.throws(() => {
       return new Logger(apiKey, {
