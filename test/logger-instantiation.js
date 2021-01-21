@@ -125,6 +125,19 @@ test('Logger instance properties', async (t) => {
 
   t.test('Check default property values of properties', async (tt) => {
     const log = new Logger(apiKey)
+
+    tt.match(
+      log[Symbol.for('requestDefaults')].useHttps
+    , true
+    , 'useHttps is true'
+    )
+
+    tt.strictEqual(
+      log[Symbol.for('ignoreRetryableErrors')]
+    , true
+    , 'ignoreRetryableErrors is true'
+    )
+
     tt.match(log, {
       flushLimit: 5000000
     , flushIntervalMs: 250
@@ -134,10 +147,6 @@ test('Logger instance properties', async (t) => {
     , url: 'https://logs.logdna.com/logs/ingest'
     , app: 'default'
     , level: 'INFO'
-    , [Symbol.for('requestDefaults')]: {
-        userHttps: true
-      }
-    , [Symbol.for('ignoreRetryableErrors')]: true
     , sendUserAgent: true
     })
   })
