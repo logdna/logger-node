@@ -1,3 +1,9 @@
+# 2021-01-22, Version 2.2.1 (Stable)
+
+* [[26600d6d94](https://github.com/logdna/logger-node/commit/26600d6d94)] - fix: Remove length validation for instantiation options (Darin Spivey)
+* [[bff4b95e17](https://github.com/logdna/logger-node/commit/bff4b95e17)] - fix: tests should not use `match` for Symbols (Darin Spivey)
+* [[7d93f15a5c](https://github.com/logdna/logger-node/commit/7d93f15a5c)] - fix: tags array values must be converted to a string (Darin Spivey)
+
 # 2021-01-19, Version 2.2.0 (Stable)
 
 * [[c84b073d95](https://github.com/logdna/logger-node/commit/c84b073d95)] - deps: eslint-config-logdna@4.0.2 (Darin Spivey)
