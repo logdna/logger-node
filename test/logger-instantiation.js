@@ -224,6 +224,18 @@ test('Logger instance properties', async (t) => {
     )
   })
 
+  t.test('UserAgent is stripped of invalid characters', async (tt) => {
+    const log = new Logger(apiKey, {
+      UserAgent: '\n\nlogdna-w\0inson/2.3.2\0\n'
+    })
+    const expected = `${constants.USER_AGENT} (logdna-winson/2.3.2)`
+    tt.strictEqual(
+      log[Symbol.for('userAgentHeader')]
+    , expected
+    , 'UserAgent value contains only valid characters'
+    )
+  })
+
   t.test('Tags can be a string', async (tt) => {
     const options = createOptions({
       tags: 'one ,  two,   three  '
