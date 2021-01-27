@@ -1,3 +1,7 @@
+# 2021-01-27, Version 2.2.2 (Stable)
+
+* [[e8df8ad569](https://github.com/logdna/logger-node/commit/e8df8ad569)] - fix: Remove invalid characters from the user-agent (Darin Spivey)
+
 # 2021-01-22, Version 2.2.1 (Stable)
 
 * [[26600d6d94](https://github.com/logdna/logger-node/commit/26600d6d94)] - fix: Remove length validation for instantiation options (Darin Spivey)
