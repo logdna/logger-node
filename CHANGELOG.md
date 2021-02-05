@@ -1,3 +1,7 @@
+# 2021-02-05, Version 2.2.3 (Stable)
+
+* [[a0f141bfaa](https://github.com/logdna/logger-node/commit/a0f141bfaa)] - doc: add contribution guides (Eric Satterwhite)
+
 # 2021-01-27, Version 2.2.2 (Stable)
 
 * [[e8df8ad569](https://github.com/logdna/logger-node/commit/e8df8ad569)] - fix: Remove invalid characters from the user-agent (Darin Spivey)
