@@ -5,7 +5,7 @@
   <p align="center">Node.js library for logging to <a href="https://logdna.com">LogDNA</a></p>
 </p>
 
-[![Coverage Status](https://coveralls.io/repos/github/logdna/logger-node/badge.svg?branch=master)](https://coveralls.io/github/logdna/logger-node?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/logdna/logger-node/badge.svg?branch=main)](https://coveralls.io/github/logdna/logger-node?branch=main)
 ---
 
 * **[Migrating From Other Versions](#migrating-from-other-versions)**
@@ -504,8 +504,8 @@ For Winston support, reference our [logdna-winston](https://github.com/logdna/lo
 
 ## Using with AWS Lambda
 
-AWS Lambda relays `stdout` and `stderr` output from your function's code to CloudWatch, 
-but you can easily set up a `Logger` instance as shown above to send logs to LogDNA instead. 
+AWS Lambda relays `stdout` and `stderr` output from your function's code to CloudWatch,
+but you can easily set up a `Logger` instance as shown above to send logs to LogDNA instead.
 If you have existing code that uses `console.log` and `console.error` statements, you can
 also override these `console` methods to send output to LogDNA without changing your code:
 
@@ -540,7 +540,7 @@ console.error = function(message, ...args) {
 
 exports.handler = async function handler(event, context) {  
   logger.on('error', consoleError)
-  
+
   // Your code here
   console.log('Informational log')
   console.log({
