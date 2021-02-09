@@ -1,3 +1,7 @@
+# 2021-02-09, Version 2.2.4 (Stable)
+
+* [[ed7835a5d6](https://github.com/logdna/logger-node/commit/ed7835a5d6)] - fix: Move branch name from master to main (Darin Spivey)
+
 # 2021-02-05, Version 2.2.3 (Stable)
 
 * [[a0f141bfaa](https://github.com/logdna/logger-node/commit/a0f141bfaa)] - doc: add contribution guides (Eric Satterwhite)
