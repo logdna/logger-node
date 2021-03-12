@@ -404,6 +404,7 @@ test('Connection-based error codes trigger a retry', (t) => {
   , 'EPIPE'
   , 'ENOTFOUND'
   , 'ENETUNREACH'
+  , 'EADDRNOTAVAIL'
   ]
 
   codes.forEach((code) => {
