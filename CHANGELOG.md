@@ -1,3 +1,7 @@
+# 2021-03-15, Version 2.3.0 (Stable)
+
+* [[ba40b6948a](https://github.com/logdna/logger-node/commit/ba40b6948a)] - **(SEMVER-MINOR)** feat: Add EADDRNOTAVAIL to the retryable error codes (Darin Spivey)
+
 # 2021-02-09, Version 2.2.4 (Stable)
 
 * [[ed7835a5d6](https://github.com/logdna/logger-node/commit/ed7835a5d6)] - fix: Move branch name from master to main (Darin Spivey)
