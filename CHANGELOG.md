@@ -1,3 +1,7 @@
+# 2021-03-22, Version 2.3.1 (Stable)
+
+* [[2cda1aac84](https://github.com/logdna/logger-node/commit/2cda1aac84)] - fix: Turn off maxBodyLength in Axios (Darin Spivey)
+
 # 2021-03-15, Version 2.3.0 (Stable)
 
 * [[ba40b6948a](https://github.com/logdna/logger-node/commit/ba40b6948a)] - **(SEMVER-MINOR)** feat: Add EADDRNOTAVAIL to the retryable error codes (Darin Spivey)
