@@ -1,0 +1,28 @@
+{
+  "projectName": "logger-node",
+  "projectOwner": "logdna",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": true,
+  "commitConvention": "angular",
+  "contributors": [
+    {
+      "login": "darinspivey",
+      "name": "Darin Spivey",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1874788?v=4",
+      "profile": "https://github.com/darinspivey",
+      "contributions": [
+        "code",
+        "doc",
+        "maintenance",
+        "test",
+        "ideas"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7
+}
