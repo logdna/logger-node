@@ -10,7 +10,16 @@
   "scripts": {
     "lint": "eslint .",
     "pretest": "npm run lint",
-    "test": "tap"
+    "test": "tap",
+    "pretest:ci": "npm run lint",
+    "test:ci": "tools/test-ci.sh",
+    "release": "semantic-release"
+  },
+  "release": {
+    "branches": [
+      "main"
+    ],
+    "extends": "semantic-release-config-logdna"
   },
   "repository": {
     "type": "git",
@@ -80,63 +89,6 @@
       "ecmaVersion": 2019
     }
   },
-  "husky": {
-    "hooks": {
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
-    }
-  },
-  "commitlint": {
-    "rules": {
-      "body-leading-blank": [
-        2,
-        "always"
-      ],
-      "body-max-line-length": [
-        2,
-        "always",
-        72
-      ],
-      "body-min-length": [
-        2,
-        "always",
-        20
-      ],
-      "subject-max-length": [
-        2,
-        "always",
-        72
-      ],
-      "scope-empty": [
-        2,
-        "always"
-      ],
-      "subject-full-stop": [
-        2,
-        "never",
-        "."
-      ],
-      "type-enum": [
-        2,
-        "always",
-        [
-          "feat",
-          "deps",
-          "fix",
-          "docs",
-          "package",
-          "style",
-          "refactor",
-          "test",
-          "revert",
-          "WIP"
-        ]
-      ],
-      "type-empty": [
-        2,
-        "never"
-      ]
-    }
-  },
   "publishConfig": {
     "access": "public"
   },
@@ -153,8 +105,11 @@
     "eslint-config-logdna": "^4.0.2",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-sensible": "^2.2.1",
-    "husky": "^4.2.5",
     "nock": "^13.0.2",
-    "tap": "^14.10.8"
+    "semantic-release": "^17.4.2",
+    "semantic-release-config-logdna": "^1.1.1",
+    "tap": "^14.11.0",
+    "tap-parser": "^10.1.0",
+    "tap-xunit": "^2.4.1"
   }
 }
