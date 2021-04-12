@@ -1,7 +1,4 @@
 <p align="center">
-<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-6-orange.svg?style=flat-square)](#contributors-)
-<!-- ALL-CONTRIBUTORS-BADGE:END -->
   <a href="https://app.logdna.com">
     <img height="95" width="201" src="https://raw.githubusercontent.com/logdna/artwork/master/logo%2Bnode.png">
   </a>
@@ -608,6 +605,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="https://github.com/alanzchen"><img src="https://avatars.githubusercontent.com/u/2144783?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Alan Chen</b></sub></a><br /><a href="https://github.com/logdna/logger-node/commits?author=alanzchen" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/mdeltito"><img src="https://avatars.githubusercontent.com/u/69520?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Mike Del Tito</b></sub></a><br /><a href="https://github.com/logdna/logger-node/commits?author=mdeltito" title="Documentation">📖</a></td>
     <td align="center"><a href="https://www.designveloper.com/vi/"><img src="https://avatars.githubusercontent.com/u/51075198?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Nhut Tran</b></sub></a><br /><a href="https://github.com/logdna/logger-node/commits?author=nhuttm" title="Code">💻</a></td>
+    <td align="center"><a href="http://codedependant.net/"><img src="https://avatars.githubusercontent.com/u/148561?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Eric Satterwhite</b></sub></a><br /><a href="https://github.com/logdna/logger-node/commits?author=esatterwhite" title="Documentation">📖</a></td>
   </tr>
 </table>
 

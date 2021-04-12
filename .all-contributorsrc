@@ -67,6 +67,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "esatterwhite",
+      "name": "Eric Satterwhite",
+      "avatar_url": "https://avatars.githubusercontent.com/u/148561?v=4",
+      "profile": "http://codedependant.net/",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7
