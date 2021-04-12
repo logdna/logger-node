@@ -103,8 +103,6 @@
     "@commitlint/config-conventional": "^9.1.2",
     "eslint": "^7.4.0",
     "eslint-config-logdna": "^4.0.2",
-    "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-sensible": "^2.2.1",
     "nock": "^13.0.2",
     "semantic-release": "^17.4.2",
     "semantic-release-config-logdna": "^1.1.1",
