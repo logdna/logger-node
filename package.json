@@ -41,36 +41,6 @@
     "name": "LogDNA, Inc.",
     "email": "help@logdna.com"
   },
-  "contributors": [
-    {
-      "name": "Alan Chen",
-      "email": "github@zenan.ch"
-    },
-    {
-      "name": "Darin Spivey",
-      "email": "darin.spivey@logdna.com"
-    },
-    {
-      "name": "Eric Satterwhite",
-      "email": "esatterwhite@wi.rr.com"
-    },
-    {
-      "name": "Mike Del Tito",
-      "email": "mike.deltito@logdna.com"
-    },
-    {
-      "name": "Ryan Mottley",
-      "email": "ryan.mottley@logdna.com"
-    },
-    {
-      "name": "relative",
-      "email": "relative@riseup.net"
-    },
-    {
-      "name": "Tran Minh Nhut",
-      "email": "nhuttm@dgroup.co"
-    }
-  ],
   "license": "SEE LICENSE IN LICENSE",
   "bugs": {
     "url": "https://github.com/logdna/logger-node/issues"
