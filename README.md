@@ -12,6 +12,7 @@
 * **[Install](#install)**
 * **[Setup](#setup)**
 * **[Usage](#usage)**
+    * [Logging Errors](#logging-errors)
 * **[Supported Log Levels](#supported-log-levels)**
 * **[Convenience Methods](#convenience-methods)**
 * **[Events](#events)**
@@ -82,19 +83,56 @@ logger.log('This will be a DEBUG statement, based on the default')
 
 logger.log('This is an INFO statement with an options object', {
   level: 'info'
+, meta: {
+    somekey: 'Arbitrary message'
+  , anotherkey: 'Another arbitrary message or data point'
+  }
 })
 
 logger.info('This is an INFO statement using a convenience method')
 
-logger.error('This is an error with meta data attached', {
-  indexMeta: true
-, meta: {
-    message: 'TypeError for XYZ'
-  , err
-  }
+// Objects can be logged, too, but they're just serialized
+logger.info({
+  message: 'Got some user data'
+, userId: req.params.userId // This assumes `req.params` comes from some HTTP framework
 })
 
-logger.error(err) // Objects can be logged too
+// Just sets `level: 'error'` automatically
+logger.error('An error was encountered while processing user data')
+```
+
+### Logging Errors
+
+Although the logger can accept an object as its "message", `Error` instances contain
+non-enumerable properties such that `log.error(err)` will not yield the expected results.
+To mitigate this, users can trap (or generate) errors, then expose the error properties
+as desired.
+
+This example hardcodes some JSON to parse, but it could easily come from user input.
+
+```javascript
+const input = '{"whoops": "This JSON is malformed because it\'s missing a closing quote}'
+try {
+  JSON.parse(input)
+} catch (err) {
+  log.error('JSON parse error while processing a string that should be JSON', {
+    indexMeta: true // Makes `meta` searchable. See docs below.
+  , meta: {
+      name: err.name
+    , message: err.message
+    , stack: err.stack
+    , input
+    }
+  })
+
+  // OR, if the all the details aren't important, a more concise log could be this
+  log.error(err.message, {
+    meta: {
+      message: 'JSON parse error during function xxx'
+    , input
+    }
+  })
+}
 ```
 
 ## Supported Log Levels
