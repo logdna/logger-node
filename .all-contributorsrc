@@ -31,6 +31,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "ligerzero459",
+      "name": "Ryan Mottley",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1093351?v=4",
+      "profile": "https://github.com/ligerzero459",
+      "contributions": [
+        "maintenance"
+      ]
     }
   ],
   "contributorsPerLine": 7

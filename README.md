@@ -1,6 +1,6 @@
 <p align="center">
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-3-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
   <a href="https://app.logdna.com">
     <img height="95" width="201" src="https://raw.githubusercontent.com/logdna/artwork/master/logo%2Bnode.png">
@@ -604,6 +604,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
   <tr>
     <td align="center"><a href="https://github.com/darinspivey"><img src="https://avatars.githubusercontent.com/u/1874788?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Darin Spivey</b></sub></a><br /><a href="https://github.com/logdna/logger-node/commits?author=darinspivey" title="Code">💻</a> <a href="https://github.com/logdna/logger-node/commits?author=darinspivey" title="Documentation">📖</a> <a href="#maintenance-darinspivey" title="Maintenance">🚧</a> <a href="https://github.com/logdna/logger-node/commits?author=darinspivey" title="Tests">⚠️</a> <a href="#ideas-darinspivey" title="Ideas, Planning, & Feedback">🤔</a></td>
     <td align="center"><a href="https://pxl.blue/"><img src="https://avatars.githubusercontent.com/u/59253100?v=4?s=100" width="100px;" alt=""/><br /><sub><b>relative</b></sub></a><br /><a href="https://github.com/logdna/logger-node/commits?author=relative" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/ligerzero459"><img src="https://avatars.githubusercontent.com/u/1093351?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Ryan Mottley</b></sub></a><br /><a href="#maintenance-ligerzero459" title="Maintenance">🚧</a></td>
   </tr>
 </table>
 
