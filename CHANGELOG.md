@@ -1,3 +1,34 @@
+## Changelog
+
+## [2.3.2](https://github.com/logdna/logger-node/compare/v2.3.1...v2.3.2) (2021-04-13)
+
+
+### Bug Fixes
+
+* **docs**: Correct bad documentation for logging errors [0606986](https://github.com/logdna/logger-node/commit/06069863460194470ad80a8aaa89fdc8fb805104) - Darin Spivey
+
+
+### Chores
+
+* **contributors**: Use all-contributors [78d997f](https://github.com/logdna/logger-node/commit/78d997f57694c3e791593014e21bb46665233430) - Darin Spivey
+* **deps**: Remove unnecessary eslint plugins [1141c8d](https://github.com/logdna/logger-node/commit/1141c8db01e143114420f8e002770ca7f783c8ed) - Darin Spivey
+
+
+### Continuous Integration
+
+* Switch to using semantic-release [b1fa6ca](https://github.com/logdna/logger-node/commit/b1fa6cabf902032774cc814a8f6d3fd071bce3a0) - Darin Spivey
+
+
+### Miscellaneous
+
+* add @alanzchen as a contributor [61600f3](https://github.com/logdna/logger-node/commit/61600f377a5817e4d8c079d56d9eb36ccb6e69ef) - Darin Spivey
+* add @darinspivey as a contributor [af54268](https://github.com/logdna/logger-node/commit/af54268f7fb373f1d4785df7d2f06ad023ae609c) - Darin Spivey
+* add @esatterwhite as a contributor [6c8807f](https://github.com/logdna/logger-node/commit/6c8807f91d5369f287d8b523f6a25e63960b8104) - Darin Spivey
+* add @ligerzero459 as a contributor [9bdeac8](https://github.com/logdna/logger-node/commit/9bdeac876015e91d09d3bf2d6be203fe20dd6e6f) - Darin Spivey
+* add @mdeltito as a contributor [369e1ac](https://github.com/logdna/logger-node/commit/369e1ac165f7e0d7d257eef5b07f3d5389c70dd3) - Darin Spivey
+* add @nhuttm as a contributor [e8e63c2](https://github.com/logdna/logger-node/commit/e8e63c22d679b5b3f927e98e28ab2b2bddd12e9e) - Darin Spivey
+* add @relative as a contributor [50c9050](https://github.com/logdna/logger-node/commit/50c9050cbb22a88d9122eac7c2cdd20a3a007c21) - Darin Spivey
+
 # 2021-03-22, Version 2.3.1 (Stable)
 
 * [[2cda1aac84](https://github.com/logdna/logger-node/commit/2cda1aac84)] - fix: Turn off maxBodyLength in Axios (Darin Spivey)
