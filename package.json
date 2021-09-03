@@ -13,8 +13,16 @@
     "test": "tap",
     "pretest:ci": "npm run lint",
     "test:ci": "tools/test-ci.sh",
-    "release": "semantic-release"
+    "release": "semantic-release",
+    "release:dry": "semantic-release --dry-run --no-ci --branches=${BRANCH_NAME:-main}"
   },
+  "files": [
+    "lib/",
+    "index.js",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
   "release": {
     "branches": [
       "main"
@@ -23,7 +31,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/logdna/logger-node.git"
+    "url": "git+ssh://git@github.com/logdna/logger-node.git"
   },
   "keywords": [
     "logdna",
@@ -62,6 +70,31 @@
   "publishConfig": {
     "access": "public"
   },
+  "tap": {
+    "100": true,
+    "ts": false,
+    "jsx": false,
+    "browser": false,
+    "reporter": "tap",
+    "output-file": ".tap-output",
+    "check-coverage": true,
+    "files": [
+      "test/**/*.js"
+    ],
+    "coverage-report": [
+      "text",
+      "text-summary",
+      "json",
+      "json-summary",
+      "html"
+    ],
+    "nyc-arg": [
+      "--exclude=test/",
+      "--exclude=coverage/",
+      "--exclude=tools/",
+      "--all"
+    ]
+  },
   "dependencies": {
     "agentkeepalive": "^4.1.3",
     "axios": "^0.21.1",
@@ -69,14 +102,12 @@
     "json-stringify-safe": "^5.0.1"
   },
   "devDependencies": {
-    "@commitlint/cli": "^9.1.2",
-    "@commitlint/config-conventional": "^9.1.2",
-    "eslint": "^7.4.0",
-    "eslint-config-logdna": "^4.0.2",
-    "nock": "^13.0.2",
-    "semantic-release": "^17.4.2",
-    "semantic-release-config-logdna": "^1.1.1",
-    "tap": "^14.11.0",
+    "eslint": "^7.32.0",
+    "eslint-config-logdna": "^5.1.0",
+    "nock": "^13.1.3",
+    "semantic-release": "^17.4.7",
+    "semantic-release-config-logdna": "^1.3.0",
+    "tap": "^15.0.9",
     "tap-parser": "^10.1.0",
     "tap-xunit": "^2.4.1"
   }

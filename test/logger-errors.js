@@ -51,7 +51,7 @@ test('timestamp validity checks', (t) => {
   nock(logger.url)
     .post('/', (body) => {
       const payload = body.ls
-      t.strictEqual(payload.length, 2, 'Number of lines is correct')
+      t.equal(payload.length, 2, 'Number of lines is correct')
       const [{timestamp: stamp1}, {timestamp: stamp2}] = payload
       t.ok(stamp1 > startTime, 'bad time format was replaced with a good one')
       t.ok(stamp2 > startTime, 'out of range time was replaced with a good one')
@@ -62,7 +62,7 @@ test('timestamp validity checks', (t) => {
     .persist()
 
   logger.on('send', (obj) => {
-    t.deepEqual(obj, {
+    t.same(obj, {
       httpStatus: 200
     , firstLine: 'my log line'
     , lastLine: 'my log line'
@@ -86,7 +86,7 @@ test('.log() throws if options is a string and not a valid log entry', (t) => {
 
   logger.on('error', (err) => {
     t.type(err, TypeError, 'Expected to be a TypeError')
-    t.deepEqual(err, {
+    t.same(err, {
       name: 'TypeError'
     , message: 'If \'options\' is a string, then it must be a valid log level'
     , meta: {
@@ -128,7 +128,7 @@ test('.log() passed an invalid log level uses the default instead', (t) => {
   nock(logger.url)
     .post('/', (body) => {
       const obj = body.ls[0]
-      t.strictEqual(obj.level, 'INFO', 'Default level was used instead')
+      t.equal(obj.level, 'INFO', 'Default level was used instead')
       return true
     })
     .query(() => { return true })
@@ -136,7 +136,7 @@ test('.log() passed an invalid log level uses the default instead', (t) => {
 
   logger.on('error', (err) => {
     t.type(err, Error, 'Expected to be an Error')
-    t.deepEqual(err, {
+    t.same(err, {
       name: 'Error'
     , message: 'Invalid log level.  Using the default instead.'
     , meta: {
@@ -156,7 +156,7 @@ test('.log() ignores empty or null messages', async (t) => {
     tt.plan(1)
 
     logger.once('warn', (obj) => {
-      tt.deepEqual(obj, {
+      tt.same(obj, {
         message: 'Log statement was empty.  Ignored'
       , statement: null
       }, `Got warning for ${obj.statement}`)
@@ -168,7 +168,7 @@ test('.log() ignores empty or null messages', async (t) => {
     tt.plan(1)
 
     logger.once('warn', (obj) => {
-      tt.deepEqual(obj, {
+      tt.same(obj, {
         message: 'Log statement was empty.  Ignored'
       , statement: null
       }, `Got warning for ${obj.statement}`)
@@ -180,7 +180,7 @@ test('.log() ignores empty or null messages', async (t) => {
     tt.plan(1)
 
     logger.once('warn', (obj) => {
-      tt.deepEqual(obj, {
+      tt.same(obj, {
         message: 'Log statement was empty.  Ignored'
       , statement: ''
       }, `Got warning for ${obj.statement}`)
@@ -195,7 +195,7 @@ test('removeMetaProperty emits \'warn\' if property is not found', (t) => {
 
   logger.on('removeMetaProperty', t.fail)
   logger.on('warn', (obj) => {
-    t.deepEqual(obj, {
+    t.same(obj, {
       message: 'Property is not an existing meta property.  Cannot remove.'
     , key: 'NOPE'
     }, 'Got expected warning')
@@ -225,7 +225,7 @@ test('HTTP timeout will emit Error and continue to retry', (t) => {
   // the same as a timeout on response body (connection accepted; no reply)
   nock(logger.url)
     .post('/', () => {
-      t.strictEqual(
+      t.equal(
         logger[Symbol.for('isLoggingBackedOff')]
       , false
       , 'Logger is not backed off prior to the first failure'
@@ -239,7 +239,7 @@ test('HTTP timeout will emit Error and continue to retry', (t) => {
     .delayConnection(delay + 1)
     .reply(200, 'Will Not Happen')
     .post('/', () => {
-      t.strictEqual(
+      t.equal(
         logger[Symbol.for('isLoggingBackedOff')]
       , true
       , 'Logger is backed off'
@@ -270,7 +270,7 @@ test('HTTP timeout will emit Error and continue to retry', (t) => {
 
   logger.on('error', (err) => {
     t.type(err, Error, 'Error type is emitted')
-    t.deepEqual(err, {
+    t.same(err, {
       message: RETRYABLE_MSG
     , name: 'Error'
     , meta: {
@@ -287,8 +287,8 @@ test('HTTP timeout will emit Error and continue to retry', (t) => {
   })
 
   logger.on('cleared', ({message}) => {
-    t.strictEqual(message, 'All accumulated log entries have been sent', 'cleared msg')
-    t.strictEqual(
+    t.equal(message, 'All accumulated log entries have been sent', 'cleared msg')
+    t.equal(
       logger[Symbol.for('isLoggingBackedOff')]
     , false
     , 'Logger is not backed off after having a successful connection'
@@ -328,7 +328,7 @@ test('A 500-level statusCode error will continue to retry', (t) => {
       // Fail 3 times, then succeed
       nock(logger.url)
         .post('/', () => {
-          tt.strictEqual(
+          tt.equal(
             logger[Symbol.for('isLoggingBackedOff')]
           , false
           , 'Logger is not backed off prior to the first failure'
@@ -338,7 +338,7 @@ test('A 500-level statusCode error will continue to retry', (t) => {
         .query(() => { return true })
         .reply(code, 'SERVER KABOOM')
         .post('/', () => {
-          tt.strictEqual(
+          tt.equal(
             logger[Symbol.for('isLoggingBackedOff')]
           , true
           , 'Logger is backed off'
@@ -370,12 +370,12 @@ test('A 500-level statusCode error will continue to retry', (t) => {
       })
 
       logger.on('cleared', ({message}) => {
-        tt.strictEqual(
+        tt.equal(
           message
         , 'All accumulated log entries have been sent'
         , 'cleared msg'
         )
-        tt.strictEqual(
+        tt.equal(
           logger[Symbol.for('isLoggingBackedOff')]
         , false
         , 'Logger is not backed off after having a successful connection'
@@ -420,7 +420,7 @@ test('Connection-based error codes trigger a retry', (t) => {
       // Fail 3 times, then succeed
       nock(logger.url)
         .post('/', () => {
-          tt.strictEqual(
+          tt.equal(
             logger[Symbol.for('isLoggingBackedOff')]
           , false
           , 'Logger is not backed off prior to the first failure'
@@ -430,7 +430,7 @@ test('Connection-based error codes trigger a retry', (t) => {
         .query(() => { return true })
         .replyWithError({code})
         .post('/', () => {
-          tt.strictEqual(
+          tt.equal(
             logger[Symbol.for('isLoggingBackedOff')]
           , true
           , 'Logger is backed off'
@@ -462,12 +462,12 @@ test('Connection-based error codes trigger a retry', (t) => {
       })
 
       logger.on('cleared', ({message}) => {
-        tt.strictEqual(
+        tt.equal(
           message
         , 'All accumulated log entries have been sent'
         , 'cleared msg'
         )
-        tt.strictEqual(
+        tt.equal(
           logger[Symbol.for('isLoggingBackedOff')]
         , false
         , 'Logger is not backed off after having a successful connection'
@@ -493,7 +493,7 @@ test('User-level errors are discarded after emitting an error', (t) => {
 
   nock(logger.url)
     .post('/', () => {
-      t.strictEqual(
+      t.equal(
         logger[Symbol.for('isLoggingBackedOff')]
       , false
       , 'User errors did not cause logger to back off'
@@ -522,10 +522,10 @@ test('User-level errors are discarded after emitting an error', (t) => {
   })
 
   logger.on('cleared', ({message}) => {
-    t.strictEqual(message, 'All accumulated log entries have been sent', 'cleared msg')
-    t.strictEqual(logger[Symbol.for('isSending')], false, 'no longer sending')
-    t.strictEqual(logger[Symbol.for('totalLinesReady')], 0, 'no more lines ready')
-    t.deepEqual(logger[Symbol.for('readyToSend')], [], 'send buffer is empty')
+    t.equal(message, 'All accumulated log entries have been sent', 'cleared msg')
+    t.equal(logger[Symbol.for('isSending')], false, 'no longer sending')
+    t.equal(logger[Symbol.for('totalLinesReady')], 0, 'no more lines ready')
+    t.same(logger[Symbol.for('readyToSend')], [], 'send buffer is empty')
   })
 
   logger.log('Something is invalid about this line')
@@ -579,7 +579,7 @@ test('Retry-able errors are not emitted by default', (t) => {
   })
 
   logger.on('cleared', ({message}) => {
-    t.strictEqual(message, 'All accumulated log entries have been sent', 'cleared msg')
+    t.equal(message, 'All accumulated log entries have been sent', 'cleared msg')
     t.end()
   })
   logger.log('This is a retryable error, but the event will NOT be emitted')

@@ -26,7 +26,7 @@ test('agentLog() success with a /var/log entry', (t) => {
   nock(logger.url)
     .post('/', (body) => {
       const payload = body.ls[0]
-      t.deepEqual(payload, {
+      t.same(payload, {
         line
       , t: now
       , f: '/var/log/system.log'
@@ -39,7 +39,7 @@ test('agentLog() success with a /var/log entry', (t) => {
     .reply(200, 'Ingester response')
 
   logger.on('send', (obj) => {
-    t.deepEqual(obj, {
+    t.same(obj, {
       httpStatus: 200
     , firstLine: line
     , lastLine: null
@@ -75,7 +75,7 @@ test('agentLog() success while specifying compression off', (t) => {
   nock(logger.url)
     .post('/', (body) => {
       const payload = body.ls[0]
-      t.deepEqual(payload, {
+      t.same(payload, {
         line
       , t: now
       , f: '/var/log/system.log'
@@ -88,7 +88,7 @@ test('agentLog() success while specifying compression off', (t) => {
     .reply(200, 'Ingester response')
 
   logger.on('send', (obj) => {
-    t.deepEqual(obj, {
+    t.same(obj, {
       httpStatus: 200
     , firstLine: line
     , lastLine: null
@@ -127,7 +127,7 @@ test('agentLog() success with k8s-style line', (t) => {
   nock(logger.url)
     .post('/', (body) => {
       const payload = body.ls[0]
-      t.deepEqual(payload, {
+      t.same(payload, {
         line
       , t: now
       , f: file
@@ -143,7 +143,7 @@ test('agentLog() success with k8s-style line', (t) => {
     .reply(200, 'Ingester response')
 
   logger.on('send', (obj) => {
-    t.deepEqual(obj, {
+    t.same(obj, {
       httpStatus: 200
     , firstLine: line
     , lastLine: null
@@ -189,7 +189,7 @@ test('agentLog() uses gzip compression on the payload', (t) => {
     .post('/', (body) => {
       const deflated = zlib.gunzipSync(Buffer.from(body, 'hex')).toString()
       const parsed = JSON.parse(deflated)
-      t.deepEqual(parsed, {
+      t.same(parsed, {
         e: 'ls'
       , ls: [
           payload
@@ -205,7 +205,7 @@ test('agentLog() uses gzip compression on the payload', (t) => {
     .reply(200, 'Ingester response')
 
   logger.on('send', (obj) => {
-    t.deepEqual(obj, {
+    t.same(obj, {
       httpStatus: 200
     , firstLine: line
     , lastLine: line
@@ -252,7 +252,7 @@ test('Error handling: when gzip fails, raw payload is sent instead', (t) => {
   nock(logger.url)
     .post('/', (body) => {
       t.type(body, Object, 'POST body is not a compressed string')
-      t.deepEqual(body, {
+      t.same(body, {
         e: 'ls'
       , ls: [
           payload
@@ -264,7 +264,7 @@ test('Error handling: when gzip fails, raw payload is sent instead', (t) => {
       return true
     })
     .reply(function(uri, requestBody, cb) {
-      t.strictEqual(
+      t.equal(
         this.req.headers['Content-Encoding']
       , undefined
       , 'Gzip header was removed'
@@ -273,7 +273,7 @@ test('Error handling: when gzip fails, raw payload is sent instead', (t) => {
     })
 
   logger.on('send', (obj) => {
-    t.deepEqual(obj, {
+    t.same(obj, {
       httpStatus: 200
     , firstLine: line
     , lastLine: null
@@ -284,7 +284,7 @@ test('Error handling: when gzip fails, raw payload is sent instead', (t) => {
   })
 
   logger.on('error', (err) => {
-    t.deepEqual(err, {
+    t.same(err, {
       name: 'Error'
     , message: 'Error gzipping data'
     , meta: {
@@ -327,7 +327,7 @@ test('.agentLog() warns if line is blank', async (t) => {
     tt.plan(1)
 
     logger.once('warn', (obj) => {
-      tt.deepEqual(obj, {
+      tt.same(obj, {
         message: 'Log statement was empty.  Ignored'
       , statement: null
       }, `Got warning for ${obj.statement}`)
@@ -339,7 +339,7 @@ test('.agentLog() warns if line is blank', async (t) => {
     tt.plan(1)
 
     logger.once('warn', (obj) => {
-      tt.deepEqual(obj, {
+      tt.same(obj, {
         message: 'Log statement was empty.  Ignored'
       , statement: null
       }, `Got warning for ${obj.statement}`)
@@ -353,7 +353,7 @@ test('.agentLog() warns if line is blank', async (t) => {
     tt.plan(1)
 
     logger.once('warn', (obj) => {
-      tt.deepEqual(obj, {
+      tt.same(obj, {
         message: 'Log statement was empty.  Ignored'
       , statement: null
       }, `Got warning for ${obj.statement}`)
@@ -367,7 +367,7 @@ test('.agentLog() warns if line is blank', async (t) => {
     tt.plan(1)
 
     logger.once('warn', (obj) => {
-      tt.deepEqual(obj, {
+      tt.same(obj, {
         message: 'Log statement was empty.  Ignored'
       , statement: ''
       }, `Got warning for ${obj.statement}`)
@@ -399,7 +399,7 @@ test('.agentLog() payload format handles 207 responses and emits errors', (t) =>
   nock(logger.url)
     .post('/', (body) => {
       const payload = body.ls
-      t.strictEqual(payload.length, 4, 'Payload has the right number of entries')
+      t.equal(payload.length, 4, 'Payload has the right number of entries')
       t.match(payload, [
         {line: lines[0]}
       , {line: lines[1]}
@@ -413,7 +413,7 @@ test('.agentLog() payload format handles 207 responses and emits errors', (t) =>
 
   logger.on('error', (err) => {
     if (err.meta.line !== lines[1]) return
-    t.deepEqual(err, {
+    t.same(err, {
       name: 'Error'
     , message: 'Non-200 status while ingesting this line'
     , meta: {
@@ -425,7 +425,7 @@ test('.agentLog() payload format handles 207 responses and emits errors', (t) =>
 
   logger.on('error', (err) => {
     if (err.meta.line !== lines[3]) return
-    t.deepEqual(err, {
+    t.same(err, {
       name: 'Error'
     , message: 'Non-200 status while ingesting this line'
     , meta: {
@@ -436,7 +436,7 @@ test('.agentLog() payload format handles 207 responses and emits errors', (t) =>
   })
 
   logger.on('send', (obj) => {
-    t.deepEqual(obj, {
+    t.same(obj, {
       httpStatus: 207
     , firstLine: lines[0]
     , lastLine: lines[3]
