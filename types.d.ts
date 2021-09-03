@@ -9,8 +9,10 @@ declare module "@logdna/logger" {
     fatal
   }
 
+  type CustomLevel = string
+
   interface ConstructorOptions {
-    level?: LogLevel;
+    level?: LogLevel | CustomLevel;
     tags?: string | string[];
     meta?: object;
     timeout?: number;
@@ -28,10 +30,11 @@ declare module "@logdna/logger" {
     maxBackoffMs?: number;
     withCredentials?: boolean;
     sendUserAgent?: boolean;
+    levels?: CustomLevel[];
   }
 
   interface LogOptions {
-    level?: LogLevel;
+    level?: LogLevel | CustomLevel;
     app?: string;
     env?: string;
     timestamp?: number;
@@ -41,12 +44,12 @@ declare module "@logdna/logger" {
   }
 
   export interface Logger extends EventEmitter {
-    info(statement: string | object, options?: Omit<LogOptions, 'level'>): void;
-    warn(statement: string | object, options?: Omit<LogOptions, 'level'>): void;
-    debug(statement: string | object, options?: Omit<LogOptions, 'level'>): void;
-    error(statement: string | object, options?: Omit<LogOptions, 'level'>): void;
-    fatal(statement: string | object, options?: Omit<LogOptions, 'level'>): void;
-    trace(statement: string | object, options?: Omit<LogOptions, 'level'>): void;
+    info?(statement: string | object, options?: Omit<LogOptions, 'level'>): void;
+    warn?(statement: string | object, options?: Omit<LogOptions, 'level'>): void;
+    debug?(statement: string | object, options?: Omit<LogOptions, 'level'>): void;
+    error?(statement: string | object, options?: Omit<LogOptions, 'level'>): void;
+    fatal?(statement: string | object, options?: Omit<LogOptions, 'level'>): void;
+    trace?(statement: string | object, options?: Omit<LogOptions, 'level'>): void;
     log(statement: string | object, options?: LogOptions): void;
     addMetaProperty(key: string, value: any): void;
     removeMetaProperty(key: string): void;

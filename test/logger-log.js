@@ -22,9 +22,9 @@ test('Test all log levels, including send events', async (t) => {
   for (const LEVEL of constants.LOG_LEVELS) {
     const level = LEVEL.toLowerCase()
 
-    t.test(`Calling with log.${level}`, (tt) => {
-      tt.plan(7)
-      tt.on('end', async () => {
+    t.test(`Calling with log.${level}`, (t) => {
+      t.plan(7)
+      t.on('end', async () => {
         logger.removeAllListeners()
         nock.cleanAll()
       })
@@ -32,8 +32,8 @@ test('Test all log levels, including send events', async (t) => {
       const scope = nock(opts.url)
         .post('/', (body) => {
           const numProps = Object.keys(body).length
-          tt.equal(numProps, 2, 'Number of request body properties')
-          tt.match(body, {
+          t.equal(numProps, 2, 'Number of request body properties')
+          t.match(body, {
             e: 'ls'
           , ls: [
               {
@@ -45,11 +45,11 @@ test('Test all log levels, including send events', async (t) => {
               }
             ]
           })
-          tt.equal(body.ls.length, 1, 'log line count')
+          t.equal(body.ls.length, 1, 'log line count')
           return true
         })
         .query((qs) => {
-          tt.match(qs, {
+          t.match(qs, {
             hostname: opts.hostname
           , mac: opts.mac
           , ip: opts.ip
@@ -61,7 +61,7 @@ test('Test all log levels, including send events', async (t) => {
         .reply(200, responseText)
 
       logger.on('send', (obj) => {
-        tt.same(obj, {
+        t.same(obj, {
           httpStatus: 200
         , firstLine: logText
         , lastLine: null
@@ -71,12 +71,81 @@ test('Test all log levels, including send events', async (t) => {
         }, 'Got send event')
       })
       logger.on('cleared', (obj) => {
-        tt.same(obj, {
+        t.same(obj, {
           message: 'All accumulated log entries have been sent'
         }, 'Got cleared event')
-        tt.ok(scope.isDone(), 'Nock intercepted the http call')
+        t.ok(scope.isDone(), 'Nock intercepted the http call')
       })
       logger[level](logText)
+    })
+  }
+})
+
+test('Test custom log levels, including send events', async (t) => {
+  const opts = createOptions({
+    app: 'myApp'
+  , levels: ['verbose', 'info', 'warn', 'critical', 'crash']
+  })
+  const logger = new Logger(apiKey, opts)
+  const logText = 'This is my log text'
+  const responseText = 'This is the ingester response'
+
+  for (const LEVEL of logger[Symbol.for('levels')]) {
+    t.test(`Calling with loger.log(text, ${LEVEL})`, (t) => {
+      t.plan(7)
+      t.on('end', async () => {
+        logger.removeAllListeners()
+        nock.cleanAll()
+      })
+
+      const scope = nock(opts.url)
+        .post('/', (body) => {
+          const numProps = Object.keys(body).length
+          t.equal(numProps, 2, 'Number of request body properties')
+          t.match(body, {
+            e: 'ls'
+          , ls: [
+              {
+                timestamp: Number
+              , line: logText
+              , level: LEVEL
+              , app: opts.app
+              , meta: '{}'
+              }
+            ]
+          })
+          t.equal(body.ls.length, 1, 'log line count')
+          return true
+        })
+        .query((qs) => {
+          t.match(qs, {
+            hostname: opts.hostname
+          , mac: opts.mac
+          , ip: opts.ip
+          , tags: ''
+          , now: /^\d+$/
+          }, 'Querystring properties look correct')
+          return true
+        })
+        .reply(200, responseText)
+
+      logger.on('send', (obj) => {
+        t.same(obj, {
+          httpStatus: 200
+        , firstLine: logText
+        , lastLine: null
+        , totalLinesSent: 1
+        , totalLinesReady: 0
+        , bufferCount: 0
+        }, 'Got send event')
+      })
+      logger.on('cleared', (obj) => {
+        t.same(obj, {
+          message: 'All accumulated log entries have been sent'
+        }, 'Got cleared event')
+        t.ok(scope.isDone(), 'Nock intercepted the http call')
+      })
+      logger.log(logText, LEVEL)
     })
   }
 })
