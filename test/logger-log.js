@@ -32,7 +32,7 @@ test('Test all log levels, including send events', async (t) => {
       const scope = nock(opts.url)
         .post('/', (body) => {
           const numProps = Object.keys(body).length
-          tt.strictEqual(numProps, 2, 'Number of request body properties')
+          tt.equal(numProps, 2, 'Number of request body properties')
           tt.match(body, {
             e: 'ls'
           , ls: [
@@ -45,7 +45,7 @@ test('Test all log levels, including send events', async (t) => {
               }
             ]
           })
-          tt.strictEqual(body.ls.length, 1, 'log line count')
+          tt.equal(body.ls.length, 1, 'log line count')
           return true
         })
         .query((qs) => {
@@ -61,7 +61,7 @@ test('Test all log levels, including send events', async (t) => {
         .reply(200, responseText)
 
       logger.on('send', (obj) => {
-        tt.deepEqual(obj, {
+        tt.same(obj, {
           httpStatus: 200
         , firstLine: logText
         , lastLine: null
@@ -71,7 +71,7 @@ test('Test all log levels, including send events', async (t) => {
         }, 'Got send event')
       })
       logger.on('cleared', (obj) => {
-        tt.deepEqual(obj, {
+        tt.same(obj, {
           message: 'All accumulated log entries have been sent'
         }, 'Got cleared event')
         tt.ok(scope.isDone(), 'Nock intercepted the http call')
@@ -93,14 +93,14 @@ test('Using an https:// url sends and https agent', (t) => {
   nock(logger.url)
     .post('/', (body) => {
       const payload = body.ls[0]
-      t.strictEqual(payload.line, 'This is over HTTPS', 'Log text was passed in body')
+      t.equal(payload.line, 'This is over HTTPS', 'Log text was passed in body')
       return true
     })
     .query(() => { return true })
     .reply(200, 'Ingester response')
 
   logger.on('send', (obj) => {
-    t.deepEqual(obj, {
+    t.same(obj, {
       httpStatus: 200
     , firstLine: 'This is over HTTPS'
     , lastLine: null
@@ -123,8 +123,8 @@ test('log() can be called by itself without using a level shortcut', (t) => {
   nock(logger.url)
     .post('/', (body) => {
       const payload = body.ls[0]
-      t.strictEqual(payload.line, 'Hi there', 'Log text was passed in body')
-      t.strictEqual(payload.level, 'INFO', 'Default level was used')
+      t.equal(payload.line, 'Hi there', 'Log text was passed in body')
+      t.equal(payload.level, 'INFO', 'Default level was used')
       return true
     })
     .query((qs) => {
@@ -134,7 +134,7 @@ test('log() can be called by itself without using a level shortcut', (t) => {
     .reply(200, 'Ingester response')
 
   logger.on('send', (obj) => {
-    t.deepEqual(obj, {
+    t.same(obj, {
       httpStatus: 200
     , firstLine: 'Hi there'
     , lastLine: null
@@ -159,7 +159,7 @@ test('log() will work with falsey log lines, other than null/empty/undef', (t) =
   nock(logger.url)
     .post('/', (body) => {
       const lines = body.ls.map((obj) => { return obj.line })
-      t.deepEqual(lines, ['0', 'false'], 'Request payload is correct')
+      t.same(lines, ['0', 'false'], 'Request payload is correct')
       return true
     })
     .query(() => { return true })
@@ -167,7 +167,7 @@ test('log() will work with falsey log lines, other than null/empty/undef', (t) =
     .persist()
 
   logger.on('send', (obj) => {
-    t.deepEqual(obj, {
+    t.same(obj, {
       httpStatus: 200
     , firstLine: '0'
     , lastLine: 'false'
@@ -196,14 +196,14 @@ test('log() can be passed an object to log, and serialization is "safe"', (t) =>
   nock(logger.url)
     .post('/', (body) => {
       const line = body.ls[0].line
-      t.strictEqual(line, expected, 'Object was serialized safely')
+      t.equal(line, expected, 'Object was serialized safely')
       return true
     })
     .query(() => { return true })
     .reply(200, 'Ingester response')
 
   logger.on('send', (obj) => {
-    t.deepEqual(obj, {
+    t.same(obj, {
       httpStatus: 200
     , firstLine: expected
     , lastLine: null
@@ -227,14 +227,14 @@ test('log() can be called with level (case insensitive) as an opts string', (t) 
   nock(logger.url)
     .post('/', (body) => {
       const payload = body.ls[0]
-      t.strictEqual(payload.level, 'DEBUG', 'Level is correct')
+      t.equal(payload.level, 'DEBUG', 'Level is correct')
       return true
     })
     .query(() => { return true })
     .reply(200, 'Ingester response')
 
   logger.on('send', (obj) => {
-    t.deepEqual(obj, {
+    t.same(obj, {
       httpStatus: 200
     , firstLine: 'Hi there'
     , lastLine: null
@@ -272,7 +272,7 @@ test('Call log() using an options object', (t) => {
   nock(logger.url)
     .post('/', (body) => {
       const payload = body.ls[0]
-      t.deepEqual(payload, {
+      t.same(payload, {
         timestamp
       , line: myText
       , level: 'TRACE'
@@ -288,7 +288,7 @@ test('Call log() using an options object', (t) => {
     .reply(200, 'Ingester response')
 
   logger.on('send', (obj) => {
-    t.deepEqual(obj, {
+    t.same(obj, {
       httpStatus: 200
     , firstLine: myText
     , lastLine: null
@@ -327,7 +327,7 @@ test('Using global meta in combination with per-message meta', (t) => {
       , two: 'TWO'
       , three: 3
       }
-      t.strictEqual(
+      t.equal(
         payload.meta
       , JSON.stringify(expectedMeta)
       , 'per-message meta was merged with global meta'
@@ -338,7 +338,7 @@ test('Using global meta in combination with per-message meta', (t) => {
     .reply(200, 'Ingester response')
 
   logger.on('send', (obj) => {
-    t.deepEqual(obj, {
+    t.same(obj, {
       httpStatus: 200
     , firstLine: 'Hi'
     , lastLine: null
@@ -366,14 +366,14 @@ test('Using opts.context will replace opts.meta', (t) => {
   nock(logger.url)
     .post('/', (body) => {
       const payload = body.ls[0]
-      t.strictEqual(payload.meta, JSON.stringify(opts.context), 'Context replaced meta')
+      t.equal(payload.meta, JSON.stringify(opts.context), 'Context replaced meta')
       return true
     })
     .query(() => { return true })
     .reply(200, 'Ingester response')
 
   logger.on('send', (obj) => {
-    t.deepEqual(obj, {
+    t.same(obj, {
       httpStatus: 200
     , firstLine: 'Hi'
     , lastLine: null
@@ -400,14 +400,14 @@ test('opts.context is ignored when it\'s not an object', (t) => {
   nock(logger.url)
     .post('/', (body) => {
       const payload = body.ls[0]
-      t.strictEqual(payload.meta, JSON.stringify({inMeta: true}), 'Context ignored')
+      t.equal(payload.meta, JSON.stringify({inMeta: true}), 'Context ignored')
       return true
     })
     .query(() => { return true })
     .reply(200, 'Ingester response')
 
   logger.on('send', (obj) => {
-    t.deepEqual(obj, {
+    t.same(obj, {
       httpStatus: 200
     , firstLine: 'Hi'
     , lastLine: null
@@ -436,14 +436,14 @@ test('Using opts.indexMeta will not stringify the meta data', (t) => {
   nock(logger.url)
     .post('/', (body) => {
       const payload = body.ls[0]
-      t.deepEqual(payload.meta, opts.meta, 'Meta is an object')
+      t.same(payload.meta, opts.meta, 'Meta is an object')
       return true
     })
     .query(() => { return true })
     .reply(200, 'Ingester response')
 
   logger.on('send', (obj) => {
-    t.deepEqual(obj, {
+    t.same(obj, {
       httpStatus: 200
     , firstLine: 'Howdy, folks!'
     , lastLine: null
@@ -468,14 +468,14 @@ test('indexMeta on at constructor keeps meta as an object', (t) => {
   nock(logger.url)
     .post('/', (body) => {
       const payload = body.ls[0]
-      t.deepEqual(payload.meta, {}, 'Meta is an object')
+      t.same(payload.meta, {}, 'Meta is an object')
       return true
     })
     .query(() => { return true })
     .reply(200, 'Ingester response')
 
   logger.on('send', (obj) => {
-    t.deepEqual(obj, {
+    t.same(obj, {
       httpStatus: 200
     , firstLine: 'Hey there'
     , lastLine: null
@@ -505,14 +505,14 @@ test('Using _index_meta will not stringify the meta data', (t) => {
   nock(logger.url)
     .post('/', (body) => {
       const payload = body.ls[0]
-      t.deepEqual(payload.meta, opts.meta, 'Meta is an object')
+      t.same(payload.meta, opts.meta, 'Meta is an object')
       return true
     })
     .query(() => { return true })
     .reply(200, 'Ingester response')
 
   logger.on('send', (obj) => {
-    t.deepEqual(obj, {
+    t.same(obj, {
       httpStatus: 200
     , firstLine: 'Howdy, folks!'
     , lastLine: null
@@ -546,7 +546,7 @@ test('Shim properties are put into the meta', (t) => {
   nock(logger.url)
     .post('/', (body) => {
       const payload = body.ls[0]
-      t.deepEqual(payload, {
+      t.same(payload, {
         timestamp
       , line: 'Howdy, folks!'
       , level: 'WARN'
@@ -562,7 +562,7 @@ test('Shim properties are put into the meta', (t) => {
     .reply(200, 'Ingester response')
 
   logger.on('send', (obj) => {
-    t.deepEqual(obj, {
+    t.same(obj, {
       httpStatus: 200
     , firstLine: 'Howdy, folks!'
     , lastLine: null
@@ -581,7 +581,7 @@ test('addMetaProperty() adds it to each message; indexMeta: true', (t) => {
   }))
 
   logger.on('addMetaProperty', (obj) => {
-    t.deepEqual(obj, {
+    t.same(obj, {
       message: 'Successfully added meta property'
     , key: 'metaProp'
     , value: 'metaVal'
@@ -596,7 +596,7 @@ test('addMetaProperty() adds it to each message; indexMeta: true', (t) => {
   nock(logger.url)
     .post('/', (body) => {
       const payload = body.ls[0]
-      t.deepEqual(payload.meta, {
+      t.same(payload.meta, {
         metaProp: 'metaVal'
       }, 'meta property injected into message payload')
       return true
@@ -605,7 +605,7 @@ test('addMetaProperty() adds it to each message; indexMeta: true', (t) => {
     .reply(200, 'Ingester response')
 
   logger.on('send', (obj) => {
-    t.deepEqual(obj, {
+    t.same(obj, {
       httpStatus: 200
     , firstLine: 'Howdy, folks!'
     , lastLine: null
@@ -625,7 +625,7 @@ test('addMetaProperty() adds it to each message; indexMeta: false', (t) => {
   }))
 
   logger.on('addMetaProperty', (obj) => {
-    t.deepEqual(obj, {
+    t.same(obj, {
       message: 'Successfully added meta property'
     , key: 'metaProp'
     , value: 'metaVal'
@@ -640,7 +640,7 @@ test('addMetaProperty() adds it to each message; indexMeta: false', (t) => {
   nock(logger.url)
     .post('/', (body) => {
       const payload = body.ls[0]
-      t.strictEqual(
+      t.equal(
         payload.meta
       , '{"metaProp":"metaVal"}'
       , 'meta property injected into message payload'
@@ -651,7 +651,7 @@ test('addMetaProperty() adds it to each message; indexMeta: false', (t) => {
     .reply(200, 'Ingester response')
 
   logger.on('send', (obj) => {
-    t.deepEqual(obj, {
+    t.same(obj, {
       httpStatus: 200
     , firstLine: 'Howdy, folks!'
     , lastLine: null
@@ -671,7 +671,7 @@ test('removeMetaProperty() removes it from the payload; indexMeta: true', (t) =>
   }))
 
   logger.on('removeMetaProperty', (obj) => {
-    t.deepEqual(obj, {
+    t.same(obj, {
       message: 'Successfully removed meta property'
     , key: 'two'
     }, 'Got removeMetaProperty event')
@@ -689,7 +689,7 @@ test('removeMetaProperty() removes it from the payload; indexMeta: true', (t) =>
   nock(logger.url)
     .post('/', (body) => {
       const payload = body.ls[0]
-      t.deepEqual(payload.meta, {
+      t.same(payload.meta, {
         one: 1
       , three: 3
       }, 'meta property was removed from the message payload')
@@ -699,7 +699,7 @@ test('removeMetaProperty() removes it from the payload; indexMeta: true', (t) =>
     .reply(200, 'Ingester response')
 
   logger.on('send', (obj) => {
-    t.deepEqual(obj, {
+    t.same(obj, {
       httpStatus: 200
     , firstLine: 'Howdy, folks!'
     , lastLine: null
@@ -719,7 +719,7 @@ test('removeMetaProperty() removes it from the payload; indexMeta: false', (t) =
   }))
 
   logger.on('removeMetaProperty', (obj) => {
-    t.deepEqual(obj, {
+    t.same(obj, {
       message: 'Successfully removed meta property'
     , key: 'two'
     }, 'Got removeMetaProperty event')
@@ -736,7 +736,7 @@ test('removeMetaProperty() removes it from the payload; indexMeta: false', (t) =
   nock(logger.url)
     .post('/', (body) => {
       const payload = body.ls[0]
-      t.strictEqual(payload.meta
+      t.equal(payload.meta
       , '{"one":1,"three":3}'
       , 'meta property was removed from the message payload'
       )
@@ -746,7 +746,7 @@ test('removeMetaProperty() removes it from the payload; indexMeta: false', (t) =
     .reply(200, 'Ingester response')
 
   logger.on('send', (obj) => {
-    t.deepEqual(obj, {
+    t.same(obj, {
       httpStatus: 200
     , firstLine: 'Howdy, folks!'
     , lastLine: null
@@ -764,7 +764,7 @@ test('Can call .log with HTTP (not https)', (t) => {
   const logger = new Logger(apiKey, createOptions({
     url: 'http://localhost:12345'
   }))
-  t.strictEqual(logger[Symbol.for('requestDefaults')].useHttps, false, 'HTTPS is off')
+  t.equal(logger[Symbol.for('requestDefaults')].useHttps, false, 'HTTPS is off')
   t.on('end', async () => {
     nock.cleanAll()
   })
@@ -775,7 +775,7 @@ test('Can call .log with HTTP (not https)', (t) => {
     .reply(200, 'Ingester response')
 
   logger.on('send', (obj) => {
-    t.deepEqual(obj, {
+    t.same(obj, {
       httpStatus: 200
     , firstLine: 'This is not secure'
     , lastLine: null
@@ -800,7 +800,7 @@ test('Flushing on a timer includes multiple lines', (t) => {
   nock(logger.url)
     .post('/', (body) => {
       const payload = body.ls
-      t.strictEqual(payload.length, 3, 'Payload has the right number of entries')
+      t.equal(payload.length, 3, 'Payload has the right number of entries')
       t.match(payload, [
         {
           timestamp: Number
@@ -830,7 +830,7 @@ test('Flushing on a timer includes multiple lines', (t) => {
     .reply(200, 'Ingester response')
 
   logger.on('send', (obj) => {
-    t.deepEqual(obj, {
+    t.same(obj, {
       httpStatus: 200
     , firstLine: 'Line 1'
     , lastLine: 'Line 3'
@@ -886,7 +886,7 @@ test('Immediately sends if byte size > flush byte limit', (t) => {
         break
     }
 
-    t.deepEqual(obj, {
+    t.same(obj, {
       httpStatus: 200
     , firstLine: line
     , lastLine: null
@@ -897,7 +897,7 @@ test('Immediately sends if byte size > flush byte limit', (t) => {
   })
 
   logger.on('cleared', (obj) => {
-    t.deepEqual(obj, {
+    t.same(obj, {
       message: 'All accumulated log entries have been sent'
     }, 'Expected \'cleared\' event')
     const now = Date.now()
@@ -914,7 +914,7 @@ test('flush() can be called any time, and always emits \'cleared\'', (t) => {
   const logger = new Logger(apiKey, createOptions())
 
   logger.on('cleared', ({message}) => {
-    t.strictEqual(message, 'All buffers clear; Nothing to send', 'Got cleared event')
+    t.equal(message, 'All buffers clear; Nothing to send', 'Got cleared event')
   })
 
   logger.flush()
@@ -942,7 +942,7 @@ test('207 partial-success responses emit errors for the failed lines', (t) => {
   nock(logger.url)
     .post('/', (body) => {
       const payload = body.ls
-      t.strictEqual(payload.length, 4, 'Payload has the right number of entries')
+      t.equal(payload.length, 4, 'Payload has the right number of entries')
       t.match(payload, [
         {line: lines[0]}
       , {line: lines[1]}
@@ -956,7 +956,7 @@ test('207 partial-success responses emit errors for the failed lines', (t) => {
 
   logger.on('error', (err) => {
     if (err.meta.line !== lines[1]) return
-    t.deepEqual(err, {
+    t.same(err, {
       name: 'Error'
     , message: 'Non-200 status while ingesting this line'
     , meta: {
@@ -968,7 +968,7 @@ test('207 partial-success responses emit errors for the failed lines', (t) => {
 
   logger.on('error', (err) => {
     if (err.meta.line !== lines[3]) return
-    t.deepEqual(err, {
+    t.same(err, {
       name: 'Error'
     , message: 'Non-200 status while ingesting this line'
     , meta: {
@@ -979,7 +979,7 @@ test('207 partial-success responses emit errors for the failed lines', (t) => {
   })
 
   logger.on('send', (obj) => {
-    t.deepEqual(obj, {
+    t.same(obj, {
       httpStatus: 207
     , firstLine: lines[0]
     , lastLine: lines[3]
@@ -1023,7 +1023,7 @@ test('207 partial-success responses can be parsed without status codes', (t) => 
   })
 
   logger.on('send', (obj) => {
-    t.deepEqual(obj, {
+    t.same(obj, {
       httpStatus: 207
     , firstLine: lines[0]
     , lastLine: lines[3]
@@ -1058,7 +1058,7 @@ test('Can proxy to an ingestion endpoint through an http proxy', (t) => {
         t.comment(`Bad JSON: ${received}`)
         t.fail(`Error parsing JSON: ${err.message}`)
       }
-      t.deepEqual(parsed, {
+      t.same(parsed, {
         e: 'ls'
       , ls: [
           {
@@ -1127,14 +1127,14 @@ test('sendUserAgent is `true` by default. Custom user-agent is sent.', (t) => {
     })
     .post('/', (body) => {
       const payload = body.ls[0]
-      t.strictEqual(payload.line, line)
+      t.equal(payload.line, line)
       return true
     })
     .query(() => { return true })
     .reply(200, 'Ingester response')
 
   logger.on('send', (obj) => {
-    t.deepEqual(obj, {
+    t.same(obj, {
       httpStatus: 200
     , firstLine: line
     , lastLine: null
@@ -1159,7 +1159,7 @@ test('sendUserAgent is `false`. Logger client\'s user-agent value is NOT sent', 
   nock(logger.url)
     .post('/', (body) => {
       const payload = body.ls[0]
-      t.strictEqual(payload.line, line)
+      t.equal(payload.line, line)
       return true
     })
     .query(() => { return true })
@@ -1174,7 +1174,7 @@ test('sendUserAgent is `false`. Logger client\'s user-agent value is NOT sent', 
     })
 
   logger.on('send', (obj) => {
-    t.deepEqual(obj, {
+    t.same(obj, {
       httpStatus: 200
     , firstLine: line
     , lastLine: null

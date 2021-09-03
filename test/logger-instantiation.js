@@ -8,11 +8,11 @@ const {apiKey, createOptions} = require('./common/index.js')
 
 test('Exports structure', async (t) => {
   t.type(Logger, Function, 'Logger is a function')
-  t.strictEqual(Logger.name, 'Logger', 'Class name is correct')
+  t.equal(Logger.name, 'Logger', 'Class name is correct')
 
   const methods = Object.getOwnPropertyNames(Logger.prototype)
-  t.strictEqual(methods.length, 15, 'Logger.prototype prop count')
-  t.deepEqual(methods, [
+  t.equal(methods.length, 15, 'Logger.prototype prop count')
+  t.same(methods, [
     'constructor'
   , 'addMetaProperty'
   , 'agentLog'
@@ -33,7 +33,7 @@ test('Exports structure', async (t) => {
 
 test('Logger instantiation', async (t) => {
   const log = new Logger(apiKey, createOptions())
-  t.strictEqual(log.constructor.name, 'Logger', 'instance returned')
+  t.equal(log.constructor.name, 'Logger', 'instance returned')
 })
 
 test('Logger instance properties', async (t) => {
@@ -88,7 +88,7 @@ test('Logger instance properties', async (t) => {
       })
       const agent = logger[Symbol.for('requestDefaults')].agent
       const constructorName = Object.getPrototypeOf(agent).constructor.name
-      ttt.strictEqual(
+      ttt.equal(
         constructorName
       , 'HttpsAgent'
       , 'The agent is agentkeepalive.HttpsAgent'
@@ -101,7 +101,7 @@ test('Logger instance properties', async (t) => {
       })
       const agent = logger[Symbol.for('requestDefaults')].agent
       const constructorName = Object.getPrototypeOf(agent).constructor.name
-      ttt.strictEqual(constructorName, 'Agent', 'The agent is agentkeepalive.Agent')
+      ttt.equal(constructorName, 'Agent', 'The agent is agentkeepalive.Agent')
     })
 
     tt.test('Insecure Proxy used: Agent should be HttpsProxyAgent', async (ttt) => {
@@ -110,7 +110,7 @@ test('Logger instance properties', async (t) => {
       })
       const agent = logger[Symbol.for('requestDefaults')].agent
       const constructorName = Object.getPrototypeOf(agent).constructor.name
-      ttt.strictEqual(constructorName, 'HttpsProxyAgent', 'The agent is HttpsProxyAgent')
+      ttt.equal(constructorName, 'HttpsProxyAgent', 'The agent is HttpsProxyAgent')
     })
 
     tt.test('Secure Proxy used: Agent should be HttpsProxyAgent', async (ttt) => {
@@ -119,7 +119,7 @@ test('Logger instance properties', async (t) => {
       })
       const agent = logger[Symbol.for('requestDefaults')].agent
       const constructorName = Object.getPrototypeOf(agent).constructor.name
-      ttt.strictEqual(constructorName, 'HttpsProxyAgent', 'The agent is HttpsProxyAgent')
+      ttt.equal(constructorName, 'HttpsProxyAgent', 'The agent is HttpsProxyAgent')
     })
   })
 
@@ -132,7 +132,7 @@ test('Logger instance properties', async (t) => {
     , 'useHttps is true'
     )
 
-    tt.strictEqual(
+    tt.equal(
       log[Symbol.for('ignoreRetryableErrors')]
     , true
     , 'ignoreRetryableErrors is true'
@@ -205,7 +205,7 @@ test('Logger instance properties', async (t) => {
     , timeout: options.timeout
     }, 'requestDefaults are correct')
 
-    tt.strictEqual(
+    tt.equal(
       log[Symbol.for('ignoreRetryableErrors')]
     , false
     , 'ignoreRetryableErrors was set correctly'
@@ -217,7 +217,7 @@ test('Logger instance properties', async (t) => {
     const log = new Logger(apiKey, {
       UserAgent: transport
     })
-    tt.strictEqual(
+    tt.equal(
       log[Symbol.for('userAgentHeader')]
     , `${constants.USER_AGENT} (${transport})`
     , 'UserAgent parameter was combined into the user agent header'
@@ -229,7 +229,7 @@ test('Logger instance properties', async (t) => {
       UserAgent: '\n\nlogdna-w\0inson/2.3.2\0\n'
     })
     const expected = `${constants.USER_AGENT} (logdna-winson/2.3.2)`
-    tt.strictEqual(
+    tt.equal(
       log[Symbol.for('userAgentHeader')]
     , expected
     , 'UserAgent value contains only valid characters'
@@ -242,7 +242,7 @@ test('Logger instance properties', async (t) => {
     })
     const expected = 'one,two,three'
     const log = new Logger(apiKey, options)
-    tt.strictEqual(
+    tt.equal(
       log[Symbol.for('requestDefaults')].qs.tags
     , expected
     , 'Tag string was parsed correctly and set'
@@ -255,7 +255,7 @@ test('Logger instance properties', async (t) => {
     })
     const expected = 'one,two,three'
     const log = new Logger(apiKey, options)
-    tt.strictEqual(
+    tt.equal(
       log[Symbol.for('requestDefaults')].qs.tags
     , expected
     , 'Tags array was parsed correctly and set'
@@ -268,21 +268,21 @@ test('Deprecated fields are still allowed and re-assigned', async (t) => {
     const log = new Logger(apiKey, {
       logdna_url: 'http://myhost'
     })
-    tt.strictEqual(log.url, 'http://myhost', 'url was set instead')
+    tt.equal(log.url, 'http://myhost', 'url was set instead')
   })
 
   t.test('index_meta is re-assigned to indexMeta', async (tt) => {
     const log = new Logger(apiKey, {
       index_meta: true
     })
-    tt.strictEqual(log.indexMeta, true, 'indexMeta was set instead')
+    tt.equal(log.indexMeta, true, 'indexMeta was set instead')
   })
 
   t.test('with_credentails is re-assigned to withCredentials', async (tt) => {
     const log = new Logger(apiKey, {
       with_credentials: true
     })
-    tt.strictEqual(
+    tt.equal(
       log[Symbol.for('requestDefaults')].withCredentials
     , true
     , 'withCredentials was set instead'
