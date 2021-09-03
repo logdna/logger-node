@@ -13,7 +13,8 @@
 * **[Setup](#setup)**
 * **[Usage](#usage)**
     * [Logging Errors](#logging-errors)
-* **[Supported Log Levels](#supported-log-levels)**
+* **[Default Log Levels](#default-log-levels)**
+* **[Custom Log Levels](#custom-log-levels)**
 * **[Convenience Methods](#convenience-methods)**
 * **[Events](#events)**
     * [addMetaProperty](#event-addMetaProperty)
@@ -135,9 +136,9 @@ try {
 }
 ```
 
-## Supported Log Levels
+## Default Log Levels
 
-The client supports the following log levels. They are case-insensitive.
+The client supports the following log levels by default. They are case-insensitive. Users may also add [custom log levels](#custom-log-levels).
 
 * `TRACE`
 * `DEBUG`
@@ -146,9 +147,30 @@ The client supports the following log levels. They are case-insensitive.
 * `ERROR`
 * `FATAL`
 
+## Custom Log Levels
+
+Users may provide an array of `levels` as a logger instantiation option. The `levels`
+value must be an array, and its values must be letters only. All level values are
+normalized to upper-case when sent to the LogDNA server, but their use in function
+calls is case-insensitive.
+
+```js
+const {createLogger} = require('@logdna/logger')
+const logger = createLogger(myKey, {
+  levels: ['info', 'warn', 'critical', 'catastrophic']
+})
+
+logger.info('my text') // ok
+logger.warn('some warning text') // ok
+logger.catastrophic('OH NO!') // error
+logger.log('OH NO!', 'critical') // ok
+logger.log('We are crashing!', 'catastrophic') // ok
+```
+
 ## Convenience Methods
 
-We have set up convenience methods that automatically set the log level appropriately, and are easy to read.
+We have set up convenience methods that automatically set the log level appropriately, and are easy to read. If using [custom log levels](#custom-log-levels), then convenience methods will
+only be added for custom levels that also match the [default log levels](#default-log-levels), e.g. `log.info()`.
 
 ### `logger.trace(msg[, options])`
 ### `logger.debug(msg[, options])`
@@ -291,7 +313,8 @@ For those cases, additional properties (apart from `message`) are included:
 
 * `key` [`<String>`][] - Your [ingestion key](https://docs.logdna.com/docs/ingestion-key)
 * `options` [`<Object>`][]
-    * `level` [`<String>`][] - [Level](#supported-log-levels) to be used if not specified elsewhere. **Default:** `INFO`
+    * `level` [`<String>`][] - [Level](#default-log-levels) to be used if not specified elsewhere. **Default:** `INFO`
+    * `levels` [`<Array>`][] - An array of custom log levels to use. **Default:** [Default log levels](#default-log-levels)
     * `tags` [`<Array>`][] | [`<String>`][] - Tags to be added to each message
     * `meta` [`<Object>`][] - Global metadata. Added to each message, unless overridden.
     * `timeout` [`<Number>`][] - Millisecond timeout for each HTTP request. **Default:** `30000`ms. **Max:** `300000`ms
@@ -404,8 +427,8 @@ If no work needs to be done, the `cleared` event is immediately emitted.
 ### `logger.log(statement[, options])`
 
 * `statement` [`<String>`][] | [`<Object>`][] - Text or object of the log entry. Objects are serialized.
-* `options` [`<String>`][] | [`<Object>`][] - A string representing a [level](#supported-log-levels) or an object with the following elements:
-    * `level` [`<String>`][] - Desired [level](#supported-log-levels) for the current message. **Default:** `logger.level`
+* `options` [`<String>`][] | [`<Object>`][] - A string representing a [level](#default-log-levels) or an object with the following elements:
+    * `level` [`<String>`][] - Desired [level](#default-log-levels) for the current message. **Default:** `logger.level`
     * `app` [`<String>`][] - App name to use for the current message. **Default:** `logger.app`
     * `env` [`<String>`][] - Environement name to use for the current message. **Default:** `logger.env`
     * `timestamp` [`<Number>`][] - Epoch ms time to use for the current message. Must be within 24 hours. **Default:** `Date.now()`

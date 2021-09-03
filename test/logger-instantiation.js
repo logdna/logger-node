@@ -11,7 +11,7 @@ test('Exports structure', async (t) => {
   t.equal(Logger.name, 'Logger', 'Class name is correct')
 
   const methods = Object.getOwnPropertyNames(Logger.prototype)
-  t.equal(methods.length, 15, 'Logger.prototype prop count')
+  t.equal(methods.length, 9, 'Logger.prototype prop count')
   t.same(methods, [
     'constructor'
   , 'addMetaProperty'
@@ -22,12 +22,6 @@ test('Exports structure', async (t) => {
   , 'log'
   , 'removeMetaProperty'
   , 'send'
-  , 'trace'
-  , 'debug'
-  , 'info'
-  , 'warn'
-  , 'error'
-  , 'fatal'
   ], 'Methods names as expected')
 })
 
@@ -37,7 +31,7 @@ test('Logger instantiation', async (t) => {
 })
 
 test('Logger instance properties', async (t) => {
-  t.test('Check Symbol creation and defaults', async (tt) => {
+  t.test('Check Symbol creation and defaults', async (t) => {
     const log = new Logger(apiKey)
     const propertyVals = {}
     for (const sym of Object.getOwnPropertySymbols(log)) {
@@ -58,6 +52,7 @@ test('Logger instance properties', async (t) => {
     , 'Symbol(compress)': false
     , 'Symbol(ignoreRetryableErrors)': true
     , 'Symbol(userAgentHeader)': constants.USER_AGENT
+    , 'Symbol(levels)': constants.LOG_LEVELS
     , 'Symbol(requestDefaults)': {
         auth: {
           username: apiKey
@@ -78,67 +73,100 @@ test('Logger instance properties', async (t) => {
       , useHttps: true
       }
     }
-    tt.match(propertyVals, expected, 'Symbol property defaults are correct')
+    t.match(propertyVals, expected, 'Symbol property defaults are correct')
   })
 
-  t.test('HTTP agent is assigned correctly based on proxies or not', async (tt) => {
-    tt.test('No proxy: https url is used', async (ttt) => {
+  t.test('Test default convenience methods', async (t) => {
+    const log = new Logger(apiKey)
+    t.match(log, {
+      trace: Function
+    , debug: Function
+    , info: Function
+    , warn: Function
+    , error: Function
+    , fatal: Function
+    }, 'Default convenience methods were defined')
+  })
+
+  t.test('Test custom levels and convenience methods', async (t) => {
+    const log = new Logger(apiKey, {
+      levels: ['debug', 'info', 'info', 'warn', 'debug', 'critical', 'customlevel']
+    })
+
+    t.match(log, {
+      debug: Function
+    , info: Function
+    , warn: Function
+    }, 'Custom convenience methods only exist for our default level names')
+
+    const levels = log[Symbol.for('levels')]
+    t.same(levels, [
+      'DEBUG'
+    , 'INFO'
+    , 'WARN'
+    , 'CRITICAL'
+    , 'CUSTOMLEVEL'
+    ], 'custom levels were added')
+  })
+
+  t.test('HTTP agent is assigned correctly based on proxies or not', async (t) => {
+    t.test('No proxy: https url is used', async (t) => {
       const logger = new Logger(apiKey, {
         url: 'https://ingestionserver.com'
       })
       const agent = logger[Symbol.for('requestDefaults')].agent
       const constructorName = Object.getPrototypeOf(agent).constructor.name
-      ttt.equal(
+      t.equal(
         constructorName
       , 'HttpsAgent'
       , 'The agent is agentkeepalive.HttpsAgent'
       )
     })
 
-    tt.test('No proxy: http url is used (buyer beware!)', async (ttt) => {
+    t.test('No proxy: http url is used (buyer beware!)', async (t) => {
       const logger = new Logger(apiKey, {
         url: 'http://insecureingester.com'
       })
       const agent = logger[Symbol.for('requestDefaults')].agent
       const constructorName = Object.getPrototypeOf(agent).constructor.name
-      ttt.equal(constructorName, 'Agent', 'The agent is agentkeepalive.Agent')
+      t.equal(constructorName, 'Agent', 'The agent is agentkeepalive.Agent')
     })
 
-    tt.test('Insecure Proxy used: Agent should be HttpsProxyAgent', async (ttt) => {
+    t.test('Insecure Proxy used: Agent should be HttpsProxyAgent', async (t) => {
       const logger = new Logger(apiKey, {
         proxy: 'http://user:pass@yourproxy.com'
       })
       const agent = logger[Symbol.for('requestDefaults')].agent
       const constructorName = Object.getPrototypeOf(agent).constructor.name
-      ttt.equal(constructorName, 'HttpsProxyAgent', 'The agent is HttpsProxyAgent')
+      t.equal(constructorName, 'HttpsProxyAgent', 'The agent is HttpsProxyAgent')
     })
 
-    tt.test('Secure Proxy used: Agent should be HttpsProxyAgent', async (ttt) => {
+    t.test('Secure Proxy used: Agent should be HttpsProxyAgent', async (t) => {
       const logger = new Logger(apiKey, {
         proxy: 'https://user:pass@yoursecureproxy.com'
       })
       const agent = logger[Symbol.for('requestDefaults')].agent
       const constructorName = Object.getPrototypeOf(agent).constructor.name
-      ttt.equal(constructorName, 'HttpsProxyAgent', 'The agent is HttpsProxyAgent')
+      t.equal(constructorName, 'HttpsProxyAgent', 'The agent is HttpsProxyAgent')
     })
   })
 
-  t.test('Check default property values of properties', async (tt) => {
+  t.test('Check default property values of properties', async (t) => {
     const log = new Logger(apiKey)
 
-    tt.match(
+    t.match(
       log[Symbol.for('requestDefaults')].useHttps
     , true
     , 'useHttps is true'
     )
 
-    tt.equal(
+    t.equal(
       log[Symbol.for('ignoreRetryableErrors')]
     , true
     , 'ignoreRetryableErrors is true'
     )
 
-    tt.match(log, {
+    t.match(log, {
       flushLimit: 5000000
     , flushIntervalMs: 250
     , baseBackoffMs: 3000
@@ -151,7 +179,7 @@ test('Logger instance properties', async (t) => {
     })
   })
 
-  t.test('Property Overrides with instantiation', async (tt) => {
+  t.test('Property Overrides with instantiation', async (t) => {
     const ipv6 = 'fe80::f475:68ff:fefa:42ec%awdl0'
     const options = createOptions({
       baseBackoffMs: 1000
@@ -190,10 +218,10 @@ test('Logger instance properties', async (t) => {
     , sendUserAgent: false
     }
 
-    tt.match(log, expected, 'Provided values were used in instantiation')
+    t.match(log, expected, 'Provided values were used in instantiation')
 
     const requestDefaults = log[Symbol.for('requestDefaults')]
-    tt.match(requestDefaults, {
+    t.match(requestDefaults, {
       withCredentials: options.withCredentials
     , useHttps: false
     , qs: {
@@ -205,57 +233,57 @@ test('Logger instance properties', async (t) => {
     , timeout: options.timeout
     }, 'requestDefaults are correct')
 
-    tt.equal(
+    t.equal(
       log[Symbol.for('ignoreRetryableErrors')]
     , false
     , 'ignoreRetryableErrors was set correctly'
     )
   })
 
-  t.test('UserAgent passed from a transport is included', async (tt) => {
+  t.test('UserAgent passed from a transport is included', async (t) => {
     const transport = 'logdna-winson/2.3.2'
     const log = new Logger(apiKey, {
       UserAgent: transport
     })
-    tt.equal(
+    t.equal(
       log[Symbol.for('userAgentHeader')]
     , `${constants.USER_AGENT} (${transport})`
     , 'UserAgent parameter was combined into the user agent header'
     )
   })
 
-  t.test('UserAgent is stripped of invalid characters', async (tt) => {
+  t.test('UserAgent is stripped of invalid characters', async (t) => {
     const log = new Logger(apiKey, {
       UserAgent: '\n\nlogdna-w\0inson/2.3.2\0\n'
     })
     const expected = `${constants.USER_AGENT} (logdna-winson/2.3.2)`
-    tt.equal(
+    t.equal(
       log[Symbol.for('userAgentHeader')]
     , expected
     , 'UserAgent value contains only valid characters'
     )
   })
 
-  t.test('Tags can be a string', async (tt) => {
+  t.test('Tags can be a string', async (t) => {
     const options = createOptions({
       tags: 'one ,  two,   three  '
     })
     const expected = 'one,two,three'
     const log = new Logger(apiKey, options)
-    tt.equal(
+    t.equal(
       log[Symbol.for('requestDefaults')].qs.tags
     , expected
     , 'Tag string was parsed correctly and set'
     )
   })
 
-  t.test('Tags can be an array', async (tt) => {
+  t.test('Tags can be an array', async (t) => {
     const options = createOptions({
       tags: ['one ', 'two  ', 'three   ']
     })
     const expected = 'one,two,three'
     const log = new Logger(apiKey, options)
-    tt.equal(
+    t.equal(
       log[Symbol.for('requestDefaults')].qs.tags
     , expected
     , 'Tags array was parsed correctly and set'
@@ -264,25 +292,25 @@ test('Logger instance properties', async (t) => {
 })
 
 test('Deprecated fields are still allowed and re-assigned', async (t) => {
-  t.test('logdna_url is re-assigned to url', async (tt) => {
+  t.test('logdna_url is re-assigned to url', async (t) => {
     const log = new Logger(apiKey, {
       logdna_url: 'http://myhost'
     })
-    tt.equal(log.url, 'http://myhost', 'url was set instead')
+    t.equal(log.url, 'http://myhost', 'url was set instead')
   })
 
-  t.test('index_meta is re-assigned to indexMeta', async (tt) => {
+  t.test('index_meta is re-assigned to indexMeta', async (t) => {
     const log = new Logger(apiKey, {
       index_meta: true
     })
-    tt.equal(log.indexMeta, true, 'indexMeta was set instead')
+    t.equal(log.indexMeta, true, 'indexMeta was set instead')
   })
 
-  t.test('with_credentails is re-assigned to withCredentials', async (tt) => {
+  t.test('with_credentails is re-assigned to withCredentials', async (t) => {
     const log = new Logger(apiKey, {
       with_credentials: true
     })
-    tt.equal(
+    t.equal(
       log[Symbol.for('requestDefaults')].withCredentials
     , true
     , 'withCredentials was set instead'
@@ -291,8 +319,8 @@ test('Deprecated fields are still allowed and re-assigned', async (t) => {
 })
 
 test('Instantiation Errors', async (t) => {
-  t.test('Auth key is required', async (tt) => {
-    tt.throws(() => {
+  t.test('Auth key is required', async (t) => {
+    t.throws(() => {
       return new Logger()
     }, {
       message: 'LogDNA Ingestion Key is undefined or not passed as a String'
@@ -300,8 +328,8 @@ test('Instantiation Errors', async (t) => {
     }, 'Expected error thrown')
   })
 
-  t.test('Level is a bad value', async (tt) => {
-    tt.throws(() => {
+  t.test('Level is a bad value', async (t) => {
+    t.throws(() => {
       return new Logger(apiKey, {
         level: 'NOPE'
       })
@@ -314,8 +342,8 @@ test('Instantiation Errors', async (t) => {
     }, 'Expected error thrown')
   })
 
-  t.test('Tags is not a string or an array', async (tt) => {
-    tt.throws(() => {
+  t.test('Tags is not a string or an array', async (t) => {
+    t.throws(() => {
       return new Logger(apiKey, {
         tags: {}
       })
@@ -326,8 +354,8 @@ test('Instantiation Errors', async (t) => {
     }, 'Expected error thrown')
   })
 
-  t.test('Meta is not an object', async (tt) => {
-    tt.throws(() => {
+  t.test('Meta is not an object', async (t) => {
+    t.throws(() => {
       return new Logger(apiKey, {
         meta: 'NOPE'
       })
@@ -338,8 +366,8 @@ test('Instantiation Errors', async (t) => {
     }, 'Expected error thrown')
   })
 
-  t.test('Timeout is not a number', async (tt) => {
-    tt.throws(() => {
+  t.test('Timeout is not a number', async (t) => {
+    t.throws(() => {
       return new Logger(apiKey, {
         timeout: 'NOPE'
       })
@@ -350,8 +378,8 @@ test('Instantiation Errors', async (t) => {
     }, 'Expected error thrown')
   })
 
-  t.test('Timeout is greater than the allowable value', async (tt) => {
-    tt.throws(() => {
+  t.test('Timeout is greater than the allowable value', async (t) => {
+    t.throws(() => {
       return new Logger(apiKey, {
         timeout: constants.MAX_REQUEST_TIMEOUT + 1
       })
@@ -360,8 +388,8 @@ test('Instantiation Errors', async (t) => {
     }, 'Expected error thrown')
   })
 
-  t.test('Bad hostname', async (tt) => {
-    tt.throws(() => {
+  t.test('Bad hostname', async (t) => {
+    t.throws(() => {
       return new Logger(apiKey, {
         hostname: 'ws://localhost'
       })
@@ -370,8 +398,8 @@ test('Instantiation Errors', async (t) => {
     }, 'Expected error thrown')
   })
 
-  t.test('Bad MAC address', async (tt) => {
-    tt.throws(() => {
+  t.test('Bad MAC address', async (t) => {
+    t.throws(() => {
       return new Logger(apiKey, {
         mac: 'NOPE'
       })
@@ -380,8 +408,8 @@ test('Instantiation Errors', async (t) => {
     }, 'Expected error thrown')
   })
 
-  t.test('Bad IP address', async (tt) => {
-    tt.throws(() => {
+  t.test('Bad IP address', async (t) => {
+    t.throws(() => {
       return new Logger(apiKey, {
         ip: 'NOPE'
       })
@@ -390,8 +418,8 @@ test('Instantiation Errors', async (t) => {
     }, 'Expected error thrown')
   })
 
-  t.test('Bad Server URL', async (tt) => {
-    tt.throws(() => {
+  t.test('Bad Server URL', async (t) => {
+    t.throws(() => {
       return new Logger(apiKey, {
         url: 'NOPE'
       })
@@ -400,8 +428,8 @@ test('Instantiation Errors', async (t) => {
     }, 'Expected error thrown')
   })
 
-  t.test('Bad flushLimit', async (tt) => {
-    tt.throws(() => {
+  t.test('Bad flushLimit', async (t) => {
+    t.throws(() => {
       return new Logger(apiKey, {
         flushLimit: 'NOPE'
       })
@@ -414,8 +442,8 @@ test('Instantiation Errors', async (t) => {
     }, 'Expected error thrown')
   })
 
-  t.test('Bad flushIntervalMs', async (tt) => {
-    tt.throws(() => {
+  t.test('Bad flushIntervalMs', async (t) => {
+    t.throws(() => {
       return new Logger(apiKey, {
         flushIntervalMs: 'NOPE'
       })
@@ -428,8 +456,8 @@ test('Instantiation Errors', async (t) => {
     }, 'Expected error thrown')
   })
 
-  t.test('Bad baseBackoffMs', async (tt) => {
-    tt.throws(() => {
+  t.test('Bad baseBackoffMs', async (t) => {
+    t.throws(() => {
       return new Logger(apiKey, {
         baseBackoffMs: 'NOPE'
       })
@@ -441,7 +469,7 @@ test('Instantiation Errors', async (t) => {
       }
     }, 'Expected error thrown')
 
-    tt.throws(() => {
+    t.throws(() => {
       return new Logger(apiKey, {
         baseBackoffMs: -1
       })
@@ -454,8 +482,8 @@ test('Instantiation Errors', async (t) => {
     }, 'Expected error thrown')
   })
 
-  t.test('Bad maxBackoffMs', async (tt) => {
-    tt.throws(() => {
+  t.test('Bad maxBackoffMs', async (t) => {
+    t.throws(() => {
       return new Logger(apiKey, {
         maxBackoffMs: 'NOPE'
       , baseBackoffMs: 500
@@ -469,7 +497,7 @@ test('Instantiation Errors', async (t) => {
       }
     }, 'Expected error thrown')
 
-    tt.throws(() => {
+    t.throws(() => {
       return new Logger(apiKey, {
         maxBackoffMs: -1
       , baseBackoffMs: 500
@@ -483,7 +511,7 @@ test('Instantiation Errors', async (t) => {
       }
     }, 'Expected error thrown')
 
-    tt.throws(() => {
+    t.throws(() => {
       return new Logger(apiKey, {
         maxBackoffMs: 50
       , baseBackoffMs: 200
@@ -498,8 +526,8 @@ test('Instantiation Errors', async (t) => {
     }, 'Expected error thrown')
   })
 
-  t.test('shimProperties must be a non-empty aray', async (tt) => {
-    tt.throws(() => {
+  t.test('shimProperties must be a non-empty aray', async (t) => {
+    t.throws(() => {
       return new Logger(apiKey, {
         shimProperties: 'NOPE'
       })
@@ -511,7 +539,7 @@ test('Instantiation Errors', async (t) => {
       }
     }, 'Expected error thrown')
 
-    tt.throws(() => {
+    t.throws(() => {
       return new Logger(apiKey, {
         shimProperties: []
       })
@@ -524,8 +552,8 @@ test('Instantiation Errors', async (t) => {
     }, 'Expected error thrown')
   })
 
-  t.test('max_length has been removed', async (tt) => {
-    tt.throws(() => {
+  t.test('max_length has been removed', async (t) => {
+    t.throws(() => {
       return new Logger(apiKey, {
         max_length: 100
       })
@@ -534,8 +562,8 @@ test('Instantiation Errors', async (t) => {
     }, 'Expected error thrown')
   })
 
-  t.test('Bad payloadStructure', async (tt) => {
-    tt.throws(() => {
+  t.test('Bad payloadStructure', async (t) => {
+    t.throws(() => {
       return new Logger(apiKey, {
         payloadStructure: 'NOPE'
       })
@@ -549,8 +577,8 @@ test('Instantiation Errors', async (t) => {
     }, 'Expected error thrown')
   })
 
-  t.test('Compression not available with default payloadStructure', async (tt) => {
-    tt.throws(() => {
+  t.test('Compression not available with default payloadStructure', async (t) => {
+    t.throws(() => {
       return new Logger(apiKey, {
         compress: true
       })
@@ -560,9 +588,9 @@ test('Instantiation Errors', async (t) => {
     }, 'Expected error thrown')
   })
 
-  t.test('Bad proxy value', async (tt) => {
+  t.test('Bad proxy value', async (t) => {
     const proxy = 'myproxy.myhost.com:8888'
-    tt.throws(() => {
+    t.throws(() => {
       return new Logger(apiKey, {
         proxy
       })
@@ -571,6 +599,37 @@ test('Instantiation Errors', async (t) => {
     , name: 'TypeError'
     , meta: {
         got: proxy
+      }
+    }, 'Expected error thrown')
+  })
+
+  t.test('Custom "levels" is not a valid type', async (t) => {
+    const levels = 'NOPE'
+    t.throws(() => {
+      return new Logger(apiKey, {
+        levels
+      })
+    }, {
+      message: 'levels must be an array'
+    , name: 'TypeError'
+    , meta: {
+        got: 'string'
+      }
+    }, 'Expected error thrown')
+  })
+
+  t.test('Custom "levels" cannot contain invalid characters', async (t) => {
+    const levels = ['no-way']
+    t.throws(() => {
+      return new Logger(apiKey, {
+        levels
+      })
+    }, {
+      message: '"levels" values must be letters only'
+    , name: 'Error'
+    , meta: {
+        got: 'no-way'
+      , expected: '^[A-Za-z]+$'
       }
     }, 'Expected error thrown')
   })
