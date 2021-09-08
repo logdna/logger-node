@@ -1,5 +1,17 @@
 ## Changelog
 
+# [2.4.0](https://github.com/logdna/logger-node/compare/v2.3.2...v2.4.0) (2021-09-08)
+
+
+### Chores
+
+* **deps**: Upgrade linting, tap and other deps [d6e6458](https://github.com/logdna/logger-node/commit/d6e6458903a4a60700c7d469bb8c731a629a6d4e) - Darin Spivey
+
+
+### Features
+
+* **levels**: Support custom log levels [0324293](https://github.com/logdna/logger-node/commit/0324293c0191c6050e93cf459bddd80a34fda939) - Darin Spivey
+
 ## [2.3.2](https://github.com/logdna/logger-node/compare/v2.3.1...v2.3.2) (2021-04-13)
 
 
