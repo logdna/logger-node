@@ -1,5 +1,12 @@
 ## Changelog
 
+## [2.4.1](https://github.com/logdna/logger-node/compare/v2.4.0...v2.4.1) (2021-09-23)
+
+
+### Bug Fixes
+
+* **package**: Include missing files and type definitions [4a52274](https://github.com/logdna/logger-node/commit/4a52274709166458abc65bf7531c8fbb1abbb4dd) - Darin Spivey, closes: [#55](https://github.com/logdna/logger-node/issues/55)
+
 # [2.4.0](https://github.com/logdna/logger-node/compare/v2.3.2...v2.4.0) (2021-09-08)
 
 
