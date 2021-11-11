@@ -11,7 +11,7 @@ test('Exports structure', async (t) => {
   t.equal(Logger.name, 'Logger', 'Class name is correct')
 
   const methods = Object.getOwnPropertyNames(Logger.prototype)
-  t.equal(methods.length, 9, 'Logger.prototype prop count')
+  t.equal(methods.length, 10, 'Logger.prototype prop count')
   t.same(methods, [
     'constructor'
   , 'addMetaProperty'
@@ -21,6 +21,7 @@ test('Exports structure', async (t) => {
   , '_getSendPayload'
   , 'log'
   , 'removeMetaProperty'
+  , '_shouldRetry'
   , 'send'
   ], 'Methods names as expected')
 })
@@ -522,6 +523,20 @@ test('Instantiation Errors', async (t) => {
     , meta: {
         got: 50
       , baseBackoffMs: 200
+      }
+    }, 'Expected error thrown')
+  })
+
+  t.test('Bad maxAttempts', async (t) => {
+    t.throws(() => {
+      return new Logger(apiKey, {
+        maxAttempts: 'NOPE'
+      })
+    }, {
+      message: 'maxAttempts must be an integer'
+    , name: 'TypeError'
+    , meta: {
+        got: 'NOPE'
       }
     }, 'Expected error thrown')
   })

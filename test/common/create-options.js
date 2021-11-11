@@ -26,6 +26,7 @@ module.exports = function createOptions({
 , proxy = undefined
 , ignoreRetryableErrors = undefined
 , sendUserAgent = undefined
+, maxAttempts = undefined
 } = {}) {
   return {
     key
@@ -52,5 +53,6 @@ module.exports = function createOptions({
   , proxy
   , ignoreRetryableErrors
   , sendUserAgent
+  , maxAttempts
   }
 }
