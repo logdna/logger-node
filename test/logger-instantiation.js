@@ -49,6 +49,7 @@ test('Logger instance properties', async (t) => {
     , 'Symbol(isSending)': false
     , 'Symbol(totalLinesReady)': 0
     , 'Symbol(backoffMs)': 3000
+    , 'Symbol(maxAttempts)': -1
     , 'Symbol(payloadStructure)': 'default'
     , 'Symbol(compress)': false
     , 'Symbol(ignoreRetryableErrors)': true
