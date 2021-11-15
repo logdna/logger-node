@@ -584,3 +584,59 @@ test('Retry-able errors are not emitted by default', (t) => {
   })
   logger.log('This is a retryable error, but the event will NOT be emitted')
 })
+
+test('Retry-able error limit retries', (t) => {
+  const logger = new Logger(apiKey, createOptions({
+    flushLimit: 10
+  , baseBackoffMs: 50
+  , maxBackoffMs: 100
+  , maxAttempts: 3
+  , ignoreRetryableErrors: false
+  }))
+  const code = 'ECONNABORTED'
+
+  t.on('end', async () => {
+    nock.cleanAll()
+  })
+
+  nock(logger.url)
+    .persist()
+    .post('/', () => { return true })
+    .query(() => { return true })
+    .replyWithError({code})
+
+  const errors = []
+  logger.on('error', (err) => {
+    errors.push({
+      message: err.message
+    , attempts: err.meta.attempts
+    , retrying: err.meta.retrying
+    })
+  })
+
+  logger.on('cleared', ({message}) => {
+    t.equal(message, 'All accumulated log entries have been sent', 'cleared msg')
+    t.same(
+      errors
+    , [
+        {
+          message: RETRYABLE_MSG
+        , attempts: 1
+        , retrying: true
+        }
+      , {
+          message: RETRYABLE_MSG
+        , attempts: 2
+        , retrying: true
+        }
+      , {
+          message: NOT_RETRYABLE_MSG
+        , attempts: 3
+        , retrying: false
+        }
+      ]
+    , 'retries eventually stop')
+    t.end()
+  })
+  logger.log('This is a retryable error')
+})

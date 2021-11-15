@@ -330,6 +330,7 @@ For those cases, additional properties (apart from `message`) are included:
     * `env` [`<String>`][] - An environment label attached to each message
     * `baseBackoffMs` [`<Number>`][] - Minimum exponential backoff time in milliseconds. **Default:** `3000`ms
     * `maxBackoffMs` [`<Number>`][] - Maximum exponential backoff time in milliseconds. **Default:** `30000`ms
+    * `maxAttempts` [`<Number>`][] - Maximum number of times the logger will try to send a buffer of messages when retryable errors are encountered; when the limit is reached, retryable errors will be treated as non-retryable errors.  **Default:** `-1`, meaning unlimited.
     * `withCredentials` [`<Boolean>`][] - Passed to the request library to make CORS requests. **Default:** `false`
     * `payloadStructure` [`<String>`][] - (*LogDNA usage only*) Ability to specify a different payload structure for ingestion. **Default:** `default`
     * `compress` [`<Boolean>`][] - (*LogDNA usage only*) Compression support for the agent. **Default:** `false`
