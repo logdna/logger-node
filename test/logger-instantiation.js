@@ -53,6 +53,7 @@ test('Logger instance properties', async (t) => {
     , 'Symbol(payloadStructure)': 'default'
     , 'Symbol(compress)': false
     , 'Symbol(ignoreRetryableErrors)': true
+    , 'Symbol(verboseEvents)': false
     , 'Symbol(userAgentHeader)': constants.USER_AGENT
     , 'Symbol(levels)': constants.LOG_LEVELS
     , 'Symbol(requestDefaults)': {
@@ -168,6 +169,18 @@ test('Logger instance properties', async (t) => {
     , 'ignoreRetryableErrors is true'
     )
 
+    t.equal(
+      log[Symbol.for('verboseEvents')]
+    , false
+    , 'verboseEvents is false'
+    )
+
+    t.equal(
+      log[Symbol.for('maxAttempts')]
+    , -1
+    , 'maxAttempts is -1'
+    )
+
     t.match(log, {
       flushLimit: 5000000
     , flushIntervalMs: 250
@@ -202,7 +215,9 @@ test('Logger instance properties', async (t) => {
     , mac: '01:02:03:04:05:06'
     , tags: ['whiz', null, undefined, '', ' ', '\t', '\n', 'bang', 'done', 1234, 0]
     , ignoreRetryableErrors: false
+    , verboseEvents: true
     , sendUserAgent: false
+    , maxAttempts: 5
     })
     const log = new Logger(apiKey, options)
 
@@ -239,6 +254,19 @@ test('Logger instance properties', async (t) => {
       log[Symbol.for('ignoreRetryableErrors')]
     , false
     , 'ignoreRetryableErrors was set correctly'
+    )
+
+    console.log({log}, 'log content')
+    t.equal(
+      log[Symbol.for('maxAttempts')]
+    , 5
+    , 'maxAttempts was set correctly'
+    )
+
+    t.equal(
+      log[Symbol.for('verboseEvents')]
+    , true
+    , 'verboseEvents was set correctly'
     )
   })
 

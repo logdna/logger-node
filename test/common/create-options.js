@@ -27,6 +27,7 @@ module.exports = function createOptions({
 , ignoreRetryableErrors = undefined
 , sendUserAgent = undefined
 , maxAttempts = undefined
+, verboseEvents = undefined
 } = {}) {
   return {
     key
@@ -54,5 +55,6 @@ module.exports = function createOptions({
   , ignoreRetryableErrors
   , sendUserAgent
   , maxAttempts
+  , verboseEvents
   }
 }

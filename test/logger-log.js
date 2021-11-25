@@ -1063,6 +1063,117 @@ test('207 partial-success responses emit errors for the failed lines', (t) => {
   }
 })
 
+test('207 partial-success responses emit errors with verboseEvents', (t) => {
+  t.plan(5)
+
+  const logger = new Logger(apiKey, createOptions({
+    flushIntervalMs: 500
+  , verboseEvents: true
+  }))
+  const lines = [
+    'This is the first line, which will succeeed'
+  , 'THIS LINE WILL FAIL'
+  , 'This line should succeed'
+  , 'THIS LINE WILL FAIL TOO'
+  ]
+
+  t.on('end', async () => {
+    nock.cleanAll()
+  })
+
+  const timestamp = Date.now()
+  nock(logger.url)
+    .post('/', (body) => {
+      const payload = body.ls
+      t.equal(payload.length, 4, 'Payload has the right number of entries')
+      t.match(payload, [
+        {line: lines[0]}
+      , {line: lines[1]}
+      , {line: lines[2]}
+      , {line: lines[3]}
+      ])
+      return true
+    })
+    .query(() => { return true })
+    .reply(207, {status: [200, 400, 200, 418]})
+
+  logger.on('error', (err) => {
+    if (err.meta.line !== lines[1]) return
+    t.same(err, {
+      name: 'Error'
+    , message: 'Non-200 status while ingesting this line'
+    , meta: {
+        statusCode: 400
+      , line: lines[1]
+      , buffer: [
+          {
+            timestamp
+          , line: lines[1]
+          , level: 'INFO'
+          , app: 'testing.log'
+          , env: undefined
+          , meta: '{}'
+          }
+        ]
+      }
+    }, 'Got an error event for line 2')
+  })
+
+  logger.on('error', (err) => {
+    if (err.meta.line !== lines[3]) return
+    t.same(err, {
+      name: 'Error'
+    , message: 'Non-200 status while ingesting this line'
+    , meta: {
+        statusCode: 418
+      , line: lines[3]
+      , buffer: [
+          {
+            timestamp
+          , line: lines[3]
+          , level: 'INFO'
+          , app: 'testing.log'
+          , env: undefined
+          , meta: '{}'
+          }
+        ]
+      }
+    }, 'Got an error event for line 4')
+  })
+
+  logger.on('send', (obj) => {
+    t.same(obj, {
+      httpStatus: 207
+    , firstLine: lines[0]
+    , lastLine: lines[3]
+    , totalLinesSent: 2
+    , totalLinesReady: 0
+    , bufferCount: 0
+    , buffer: [
+        {
+          timestamp
+        , line: lines[0]
+        , level: 'INFO'
+        , app: 'testing.log'
+        , env: undefined
+        , meta: '{}'
+        }, {
+          timestamp
+        , line: lines[2]
+        , level: 'INFO'
+        , app: 'testing.log'
+        , env: undefined
+        , meta: '{}'
+        }
+      ]
+    }, 'Got send event')
+  })
+
+  for (const line of lines) {
+    logger.info(line, {timestamp})
+  }
+})
+
 test('207 partial-success responses can be parsed without status codes', (t) => {
   t.plan(1)
 
@@ -1254,3 +1365,64 @@ test('sendUserAgent is `false`. Logger client\'s user-agent value is NOT sent', 
   })
   logger.log(line)
 })
+
+test('send event includes buffer when verboseEvents is enabled', (t) => {
+  const logger = new Logger(apiKey, createOptions({
+    flushIntervalMs: 500
+  , verboseEvents: true
+  }))
+  const lines = [
+    'This is the first line, which will succeeed'
+  , 'This line should succeed'
+  ]
+
+  t.on('end', async () => {
+    nock.cleanAll()
+  })
+
+  nock(logger.url)
+    .post('/', (body) => {
+      return true
+    })
+    .query(() => { return true })
+    .reply(200)
+
+  logger.on('error', () => {
+    t.fail('This test should not emit errors because there are no returned status codes')
+  })
+
+  const timestamp = Date.now()
+  logger.on('send', (obj) => {
+    t.same(obj, {
+      httpStatus: 200
+    , firstLine: lines[0]
+    , lastLine: lines[1]
+    , totalLinesSent: 2
+    , totalLinesReady: 0
+    , bufferCount: 0
+    , buffer: [
+        {
+          timestamp
+        , line: 'This is the first line, which will succeeed'
+        , level: 'INFO'
+        , app: 'testing.log'
+        , env: undefined
+        , meta: '{}'
+        }, {
+          timestamp
+        , line: 'This line should succeed'
+        , level: 'INFO'
+        , app: 'testing.log'
+        , env: undefined
+        , meta: '{}'
+        }
+      ]
+    }, 'Got send event')
+    t.end()
+  })
+
+  for (const line of lines) {
+    logger.info(line, {timestamp})
+  }
+})
+

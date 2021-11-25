@@ -32,6 +32,8 @@ declare module "@logdna/logger" {
     sendUserAgent?: boolean;
     levels?: CustomLevel[];
     maxAttempts?: number;
+    verboseEvents?: boolean;
+    ignoreRetryableErrors?: boolean;
   }
 
   interface LogOptions {
