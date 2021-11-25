@@ -532,6 +532,64 @@ test('User-level errors are discarded after emitting an error', (t) => {
   logger.log('Something else is wrong with this line too')
 })
 
+test('include buffer when verboseEvents is enabled', (t) => {
+  const logger = new Logger(apiKey, createOptions({
+    verboseEvents: true
+  }))
+
+  t.on('end', async () => {
+    nock.cleanAll()
+  })
+
+  nock(logger.url)
+    .post('/', () => { return true })
+    .query(() => { return true })
+    .reply(403, {
+      error: 'forbidden'
+    })
+    .persist()
+
+  const timestamp = Date.now()
+  logger.on('error', (err) => {
+    t.type(err, Error, 'Error type is emitted')
+    t.match(err, {
+      message: NOT_RETRYABLE_MSG
+    , meta: {
+        actual: 'Request failed with status code 403'
+      , code: 403
+      , firstLine: 'Something is invalid about this line'
+      , lastLine: 'Something else is wrong with this line too'
+      , retrying: false
+      , attempts: 1
+      , buffer: [
+          {
+            timestamp
+          , line: 'Something is invalid about this line'
+          , level: 'INFO'
+          , app: 'testing.log'
+          , env: undefined
+          , meta: '{}'
+          }, {
+            timestamp
+          , line: 'Something else is wrong with this line too'
+          , level: 'INFO'
+          , app: 'testing.log'
+          , env: undefined
+          , meta: '{}'
+          }
+        ]
+      }
+    }, 'Error properties are correct for a user error')
+  })
+
+  logger.on('cleared', ({message}) => {
+    t.end()
+  })
+
+  logger.log('Something is invalid about this line', {timestamp})
+  logger.log('Something else is wrong with this line too', {timestamp})
+})
+
 test('.log() rejects lines if payloadStructure is not \'default\'', (t) => {
   t.plan(2)
   const logger = new Logger(apiKey, createOptions({
