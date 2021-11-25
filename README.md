@@ -332,7 +332,7 @@ For those cases, additional properties (apart from `message`) are included:
     * `maxBackoffMs` [`<Number>`][] - Maximum exponential backoff time in milliseconds. **Default:** `30000`ms
     * `maxAttempts` [`<Number>`][] - Maximum number of times the logger will try to send a buffer of messages when retryable errors are encountered; when the limit is reached, retryable errors will be treated as non-retryable errors.  **Default:** `-1`, meaning unlimited.
     * `withCredentials` [`<Boolean>`][] - Passed to the request library to make CORS requests. **Default:** `false`
-    * `verboseEvents` [`<Boolean>`][] - Include the complete content of the buffer sent when emitting `send` and `error` events.  When this option is enabled, the events will include an additional `buffer` field which is an array of the messages and any metadata associated with those messages that were involved in the transmission that triggered the event.
+    * `verboseEvents` [`<Boolean>`][] - Include the complete content of the buffer sent when emitting `send` and `error` events.  When this option is enabled, the events will include an additional `buffer` field which is an array of the messages and any metadata associated with those messages that were involved in the transmission that triggered the event.  **Default:** `false`
     * `payloadStructure` [`<String>`][] - (*LogDNA usage only*) Ability to specify a different payload structure for ingestion. **Default:** `default`
     * `compress` [`<Boolean>`][] - (*LogDNA usage only*) Compression support for the agent. **Default:** `false`
     * `proxy` [`<String>`][] - The full URL of an http or https proxy to pass through
