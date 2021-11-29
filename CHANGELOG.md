@@ -1,5 +1,17 @@
 ## Changelog
 
+# [2.6.0](https://github.com/logdna/logger-node/compare/v2.5.0...v2.6.0) (2021-11-29)
+
+
+### Bug Fixes
+
+* **docs**: add default value for `verboseEvents`. [f8afe88](https://github.com/logdna/logger-node/commit/f8afe88e21bd0bfffcb1bf99fae8071a4c773a3b) - Eric Melski
+
+
+### Features
+
+* optionally include buffer in send/error events. [e3e8755](https://github.com/logdna/logger-node/commit/e3e8755e1b0598aaabe9c1e19199f99b5d02232e) - Eric Melski
+
 # [2.5.0](https://github.com/logdna/logger-node/compare/v2.4.1...v2.5.0) (2021-11-16)
 
 
