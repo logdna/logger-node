@@ -1,5 +1,12 @@
 ## Changelog
 
+## [2.6.1](https://github.com/logdna/logger-node/compare/v2.6.0...v2.6.1) (2022-01-20)
+
+
+### Chores
+
+* **deps**: axios@0.25.0 [20bd01d](https://github.com/logdna/logger-node/commit/20bd01dfc0891ba426f867e616c78ca46e3c6bc4) - Darin Spivey, closes: [#63](https://github.com/logdna/logger-node/issues/63)
+
 # [2.6.0](https://github.com/logdna/logger-node/compare/v2.5.0...v2.6.0) (2021-11-29)
 
 
