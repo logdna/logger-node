@@ -34,6 +34,7 @@ declare module "@logdna/logger" {
     maxAttempts?: number;
     verboseEvents?: boolean;
     ignoreRetryableErrors?: boolean;
+    validateLogLevels?: boolean;
   }
 
   interface LogOptions {

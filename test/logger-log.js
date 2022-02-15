@@ -150,6 +150,60 @@ test('Test custom log levels, including send events', async (t) => {
   }
 })
 
+test('Test custom log levels without validation', async (t) => {
+  const opts = createOptions({
+    app: 'myApp'
+  , validateLogLevels: false
+  })
+  const logger = new Logger(apiKey, opts)
+  const logText = 'This is my log text'
+  const responseText = 'This is the ingester response'
+
+  t.test('calling logger.log() with string opts', (t) => {
+    // Validation happens at two points.  This test checks that we skip
+    // the check when validateLogLevels is false and the log level is passed
+    // as the one and only string for "opts" in the call to log().
+
+    t.on('end', async () => {
+      logger.removeAllListeners()
+      nock.cleanAll()
+    })
+
+    t.plan(1)
+    nock(opts.url)
+      .post('/', (body) => {
+        t.same(body.ls[0].level, 'CUSTOM_1')
+        return true
+      })
+      .query((qs) => { return true })
+      .reply(200, responseText)
+
+    logger.log(logText, 'custom_1')
+  })
+
+  t.test('calling logger.log() with object opts', (t) => {
+    // Validation happens at two points.  This test checks that we skip
+    // the check when validateLogLevels is false and the log level is passed
+    // as a member of the opts object.
+
+    t.on('end', async () => {
+      logger.removeAllListeners()
+      nock.cleanAll()
+    })
+
+    t.plan(1)
+    nock(opts.url)
+      .post('/', (body) => {
+        t.same(body.ls[0].level, 'CUSTOM_1')
+        return true
+      })
+      .query((qs) => { return true })
+      .reply(200, responseText)
+
+    logger.log(logText, {level: 'custom_1'})
+  })
+})
+
 test('Using an https:// url sends and https agent', (t) => {
   const logger = new Logger(apiKey, createOptions({
     url: 'https://localhost:8888'

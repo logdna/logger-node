@@ -56,6 +56,7 @@ test('Logger instance properties', async (t) => {
     , 'Symbol(verboseEvents)': false
     , 'Symbol(userAgentHeader)': constants.USER_AGENT
     , 'Symbol(levels)': constants.LOG_LEVELS
+    , 'Symbol(validateLogLevels)': true
     , 'Symbol(requestDefaults)': {
         auth: {
           username: apiKey
@@ -110,6 +111,15 @@ test('Logger instance properties', async (t) => {
     , 'CRITICAL'
     , 'CUSTOMLEVEL'
     ], 'custom levels were added')
+  })
+
+  t.test('Test custom default level with validation disabled', async (t) => {
+    const log = new Logger(apiKey, {
+      level: 'NOPE'
+    , levels: ['YEP']
+    , validateLogLevels: false
+    })
+    t.same(log.level, 'NOPE', 'unknown default level is allowed')
   })
 
   t.test('HTTP agent is assigned correctly based on proxies or not', async (t) => {
@@ -176,6 +186,12 @@ test('Logger instance properties', async (t) => {
     )
 
     t.equal(
+      log[Symbol.for('validateLogLevels')]
+    , true
+    , 'validateLogLevels is true'
+    )
+
+    t.equal(
       log[Symbol.for('maxAttempts')]
     , -1
     , 'maxAttempts is -1'
@@ -216,6 +232,7 @@ test('Logger instance properties', async (t) => {
     , tags: ['whiz', null, undefined, '', ' ', '\t', '\n', 'bang', 'done', 1234, 0]
     , ignoreRetryableErrors: false
     , verboseEvents: true
+    , validateLogLevels: false
     , sendUserAgent: false
     , maxAttempts: 5
     })
@@ -267,6 +284,12 @@ test('Logger instance properties', async (t) => {
       log[Symbol.for('verboseEvents')]
     , true
     , 'verboseEvents was set correctly'
+    )
+
+    t.equal(
+      log[Symbol.for('validateLogLevels')]
+    , false
+    , 'validateLogLevels was set correctly'
     )
   })
 

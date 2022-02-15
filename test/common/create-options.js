@@ -28,6 +28,7 @@ module.exports = function createOptions({
 , sendUserAgent = undefined
 , maxAttempts = undefined
 , verboseEvents = undefined
+, validateLogLevels = undefined
 } = {}) {
   return {
     key
@@ -56,5 +57,6 @@ module.exports = function createOptions({
   , sendUserAgent
   , maxAttempts
   , verboseEvents
+  , validateLogLevels
   }
 }

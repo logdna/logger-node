@@ -315,6 +315,7 @@ For those cases, additional properties (apart from `message`) are included:
 * `options` [`<Object>`][]
     * `level` [`<String>`][] - [Level](#default-log-levels) to be used if not specified elsewhere. **Default:** `INFO`
     * `levels` [`<Array>`][] - An array of custom log levels to use. **Default:** [Default log levels](#default-log-levels)
+    * `validateLogLevels` [`<Boolean>`][] - If true, check that the log level specified in calls to `log()` are in the list of known log levels given by `levels`, and reject the line or coerce the level to the default `level` if the given log level is not known. **Default:** `true`
     * `tags` [`<Array>`][] | [`<String>`][] - Tags to be added to each message
     * `meta` [`<Object>`][] - Global metadata. Added to each message, unless overridden.
     * `timeout` [`<Number>`][] - Millisecond timeout for each HTTP request. **Default:** `30000`ms. **Max:** `300000`ms
