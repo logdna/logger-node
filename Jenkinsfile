@@ -45,7 +45,7 @@ pipeline {
         axes {
           axis {
             name 'NODE_VERSION'
-            values '12', '14', '15'
+            values '14', '16', '17'
           }
         }
 
@@ -57,7 +57,7 @@ pipeline {
 
         agent {
           docker {
-            image "us.gcr.io/logdna-k8s/node:${NODE_VERSION}-ci"
+            image "us.gcr.io/logdna-k8s/node:${NODE_VERSION}"
           }
         }
 
@@ -98,7 +98,7 @@ pipeline {
 
       agent {
         docker {
-          image "us.gcr.io/logdna-k8s/node:14-ci"
+          image "us.gcr.io/logdna-k8s/node:17-ci"
           customWorkspace "${PROJECT_NAME}-${BUILD_NUMBER}"
         }
       }
@@ -127,7 +127,7 @@ pipeline {
 
       agent {
         docker {
-          image "us.gcr.io/logdna-k8s/node:12-ci"
+          image "us.gcr.io/logdna-k8s/node:17-ci"
           customWorkspace "${PROJECT_NAME}-${BUILD_NUMBER}"
         }
       }
