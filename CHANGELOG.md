@@ -1,5 +1,17 @@
 ## Changelog
 
+## [2.6.2](https://github.com/logdna/logger-node/compare/v2.6.1...v2.6.2) (2022-04-14)
+
+
+### Bug Fixes
+
+* **docs**: README should recommend @logdna/browser for client-side [b99c0d3](https://github.com/logdna/logger-node/commit/b99c0d3746ae8ab3eb4acc5034ea2b91df895362) - Darin Spivey, closes: [#41](https://github.com/logdna/logger-node/issues/41)
+
+
+### Chores
+
+* **ci**: Bump to node:17 [e410324](https://github.com/logdna/logger-node/commit/e41032420fb53e56e3d6aea8ae3b6a3c6c418648) - Darin Spivey
+
 ## [2.6.1](https://github.com/logdna/logger-node/compare/v2.6.0...v2.6.1) (2022-01-20)
 
 
