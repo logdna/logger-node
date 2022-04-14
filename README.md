@@ -524,38 +524,7 @@ process.on('SIGINT', onSignal)
 
 ## Client Side
 
-Browserify Example
-
-```javascript
-const {createLogger} = require('@logdna/logger');
-const logger = createLogger('API KEY HERE', {
-  hostname:'ClientSideTest'
-, app: 'sequence'
-, indexMeta: true
-})
-
-const date = new Date().toISOString()
-const logme = () => {
-  for (var i = 0; i < 10; i++) {
-    logger.log('Hello LogDNA Test ' + date, {
-      meta: {
-        sequence: i
-      }
-    })
-  }
-}
-
-setInterval(logme, 5000);
-```
-If the above snippet is saved as a file `main.js`, then, with Browserify, you can convert this file to a `bundle.js` file:
-```
-browserify main.js -o bundle.js
-```
-The `bundle.js` file can be included like any other script:
-```
-<script src="bundle.js"></script>
-```
-When using NodeJS inside a browser, the domain needs to be whitelisted in your LogDNA organization settings.
+For logging from a browser, we recommend our [@logdna/browser](https://github.com/logdna/logdna-browser) package which is designed for that purpose.
 
 ## Bunyan Stream
 
@@ -601,7 +570,7 @@ console.error = function(message, ...args) {
   consoleError(message, ...args)
 }
 
-exports.handler = async function handler(event, context) {  
+exports.handler = async function handler(event, context) {
   logger.on('error', consoleError)
 
   // Your code here
