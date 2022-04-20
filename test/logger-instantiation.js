@@ -11,11 +11,12 @@ test('Exports structure', async (t) => {
   t.equal(Logger.name, 'Logger', 'Class name is correct')
 
   const methods = Object.getOwnPropertyNames(Logger.prototype)
-  t.equal(methods.length, 10, 'Logger.prototype prop count')
+  t.equal(methods.length, 11, 'Logger.prototype prop count')
   t.same(methods, [
     'constructor'
   , 'addMetaProperty'
   , 'agentLog'
+  , '_getPayloadSize'
   , 'bufferLog'
   , 'flush'
   , '_getSendPayload'
