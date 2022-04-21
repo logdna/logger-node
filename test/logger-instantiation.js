@@ -11,18 +11,19 @@ test('Exports structure', async (t) => {
   t.equal(Logger.name, 'Logger', 'Class name is correct')
 
   const methods = Object.getOwnPropertyNames(Logger.prototype)
-  t.equal(methods.length, 11, 'Logger.prototype prop count')
-  t.same(methods, [
-    'constructor'
+  t.equal(methods.length, 12, 'Logger.prototype prop count')
+  t.same(methods.sort(), [
+    '_getPayloadSize'
+  , '_getSendPayload'
+  , '_serializeBuffer'
+  , '_shouldRetry'
   , 'addMetaProperty'
   , 'agentLog'
-  , '_getPayloadSize'
   , 'bufferLog'
+  , 'constructor'
   , 'flush'
-  , '_getSendPayload'
   , 'log'
   , 'removeMetaProperty'
-  , '_shouldRetry'
   , 'send'
   ], 'Methods names as expected')
 })
