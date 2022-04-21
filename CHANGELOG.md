@@ -1,5 +1,12 @@
 ## Changelog
 
+## [2.6.3](https://github.com/logdna/logger-node/compare/v2.6.2...v2.6.3) (2022-04-21)
+
+
+### Code Refactoring
+
+* extract _getPayloadSize method [68a7e54](https://github.com/logdna/logger-node/commit/68a7e54e168a20c14d31a9f416842151e63a25f7) - Eric Melski
+
 ## [2.6.2](https://github.com/logdna/logger-node/compare/v2.6.1...v2.6.2) (2022-04-14)
 
 
