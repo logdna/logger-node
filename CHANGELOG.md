@@ -1,5 +1,12 @@
 ## Changelog
 
+## [2.6.4](https://github.com/logdna/logger-node/compare/v2.6.3...v2.6.4) (2022-04-21)
+
+
+### Code Refactoring
+
+* extract _serializeBuffer method [d23b0c1](https://github.com/logdna/logger-node/commit/d23b0c1c4236ffa173e552ee6fdbb2e7b750e03f) - Eric Melski
+
 ## [2.6.3](https://github.com/logdna/logger-node/compare/v2.6.2...v2.6.3) (2022-04-21)
 
 
