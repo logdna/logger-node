@@ -720,14 +720,13 @@ test('error event when _serializeBuffer throws', (t) => {
     .reply(200, 'Ingester response')
 
   logger.on('error', (err) => {
-    t.same(
+    t.match(
       err
     , {
         meta: {
           actual: 'bad serialization'
         , firstLine: 'This is the line'
         , lastLine: null
-        , url: logger.url
         }
       , name: 'Error'
       , message: 'Error serializing buffer'
@@ -753,7 +752,7 @@ test('error event when _serializeBuffer throws, verboseEvents', (t) => {
   , createOptions({verboseEvents: true})
   )
   const line = 'This is the line'
-  t.plan(1)
+  t.plan(2)
   nock(logger.url)
     .post('/', (body) => {
       return true
@@ -761,22 +760,31 @@ test('error event when _serializeBuffer throws, verboseEvents', (t) => {
     .query(() => { return true })
     .reply(200, 'Ingester response')
 
+  const timestamp = Date.now()
   logger.on('error', (err) => {
-    t.same(
+    t.type(err, Error, 'Error type is emitted')
+    t.match(
       err
     , {
-        meta: {
+        message: 'Error serializing buffer'
+      , meta: {
           actual: 'bad serialization'
         , firstLine: 'This is the line'
         , lastLine: null
-        , url: logger.url
-        , buffer: ['This is the line']
+        , buffer: [
+            {
+              timestamp
+            , line: 'This is the line'
+            , level: 'INFO'
+            , app: 'testing.log'
+            , env: undefined
+            , meta: '{}'
+            }
+          ]
         }
-      , name: 'Error'
-      , message: 'Error serializing buffer'
       }
     , 'error emitted for serialization failure'
     )
   })
-  logger.log(line)
+  logger.log(line, {timestamp})
 })
