@@ -698,3 +698,85 @@ test('Retry-able error limit retries', (t) => {
   })
   logger.log('This is a retryable error')
 })
+
+test('error event when _serializeBuffer throws', (t) => {
+  class AsyncSerializeLogger extends Logger {
+    constructor(key, opts) {
+      super(key, opts)
+    }
+    async _serializeBuffer(buffer) {
+      throw new Error('bad serialization')
+    }
+  }
+
+  const logger = new AsyncSerializeLogger(apiKey, createOptions())
+  const line = 'This is the line'
+  t.plan(1)
+  nock(logger.url)
+    .post('/', (body) => {
+      return true
+    })
+    .query(() => { return true })
+    .reply(200, 'Ingester response')
+
+  logger.on('error', (err) => {
+    t.same(
+      err
+    , {
+        meta: {
+          actual: 'bad serialization'
+        , firstLine: 'This is the line'
+        , lastLine: null
+        , url: logger.url
+        }
+      , name: 'Error'
+      , message: 'Error serializing buffer'
+      }
+    , 'error emitted for serialization failure'
+    )
+  })
+  logger.log(line)
+})
+
+test('error event when _serializeBuffer throws, verboseEvents', (t) => {
+  class AsyncSerializeLogger extends Logger {
+    constructor(key, opts) {
+      super(key, opts)
+    }
+    async _serializeBuffer(buffer) {
+      throw new Error('bad serialization')
+    }
+  }
+
+  const logger = new AsyncSerializeLogger(
+    apiKey
+  , createOptions({verboseEvents: true})
+  )
+  const line = 'This is the line'
+  t.plan(1)
+  nock(logger.url)
+    .post('/', (body) => {
+      return true
+    })
+    .query(() => { return true })
+    .reply(200, 'Ingester response')
+
+  logger.on('error', (err) => {
+    t.same(
+      err
+    , {
+        meta: {
+          actual: 'bad serialization'
+        , firstLine: 'This is the line'
+        , lastLine: null
+        , url: logger.url
+        , buffer: ['This is the line']
+        }
+      , name: 'Error'
+      , message: 'Error serializing buffer'
+      }
+    , 'error emitted for serialization failure'
+    )
+  })
+  logger.log(line)
+})
