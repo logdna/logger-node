@@ -1426,3 +1426,44 @@ test('send event includes buffer when verboseEvents is enabled', (t) => {
   }
 })
 
+test('send when _serializeBuffer is async', (t) => {
+  // Quick sanity check that everything still works if _serializeBuffer is
+  // async in a child class.
+
+  class AsyncSerializeLogger extends Logger {
+    constructor(key, opts) {
+      super(key, opts)
+    }
+    async _serializeBuffer(buffer) {
+      return super._serializeBuffer(buffer)
+    }
+  }
+
+  const logger = new AsyncSerializeLogger(apiKey, createOptions())
+  const line = 'This is the line'
+  t.plan(2)
+  t.on('end', async () => {
+    nock.cleanAll()
+  })
+
+  nock(logger.url)
+    .post('/', (body) => {
+      const payload = body.ls[0]
+      t.equal(payload.line, line)
+      return true
+    })
+    .query(() => { return true })
+    .reply(200, 'Ingester response')
+
+  logger.on('send', (obj) => {
+    t.same(obj, {
+      httpStatus: 200
+    , firstLine: line
+    , lastLine: null
+    , totalLinesSent: 1
+    , totalLinesReady: 0
+    , bufferCount: 0
+    }, 'Got send event')
+  })
+  logger.log(line)
+})
