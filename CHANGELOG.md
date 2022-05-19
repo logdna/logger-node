@@ -1,5 +1,13 @@
 ## Changelog
 
+## [2.6.5](https://github.com/logdna/logger-node/compare/v2.6.4...v2.6.5) (2022-05-19)
+
+
+### Bug Fixes
+
+* **send**: Allow _serializeBuffer() to be async [f00421a](https://github.com/logdna/logger-node/commit/f00421a23ecf9917d76b0806868ebbb7cb6adde6) - Eric Melski
+* **test**: Use correct expected result for error tests [ea88daf](https://github.com/logdna/logger-node/commit/ea88daf36ecbb9bfddacab37ef784014eda51fa0) - Eric Melski
+
 ## [2.6.4](https://github.com/logdna/logger-node/compare/v2.6.3...v2.6.4) (2022-04-21)
 
 
