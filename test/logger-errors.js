@@ -693,7 +693,8 @@ test('Retry-able error limit retries', (t) => {
         , retrying: false
         }
       ]
-    , 'retries eventually stop')
+    , 'retries eventually stop'
+    )
     t.end()
   })
   logger.log('This is a retryable error')
