@@ -805,7 +805,8 @@ test('removeMetaProperty() removes it from the payload; indexMeta: false', (t) =
   nock(logger.url)
     .post('/', (body) => {
       const payload = body.ls[0]
-      t.equal(payload.meta
+      t.equal(
+        payload.meta
       , '{"one":1,"three":3}'
       , 'meta property was removed from the message payload'
       )
