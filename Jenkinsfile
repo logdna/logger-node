@@ -8,7 +8,11 @@ def DEFAULT_BRANCH = 'main'
 def CHANGE_ID = env.CHANGE_ID == null ? '' : env.CHANGE_ID
 
 pipeline {
-  agent none
+  agent {
+    node {
+      label 'ec2-fleet'
+    }
+  }
 
   options {
     timestamps()
@@ -58,6 +62,7 @@ pipeline {
         agent {
           docker {
             image "us.gcr.io/logdna-k8s/node:${NODE_VERSION}"
+            label 'ec2-fleet'
           }
         }
 
@@ -90,7 +95,6 @@ pipeline {
 
     stage('Test Release') {
       when {
-        beforeAgent true
         not {
           branch DEFAULT_BRANCH
         }
@@ -100,6 +104,7 @@ pipeline {
         docker {
           image "us.gcr.io/logdna-k8s/node:17-ci"
           customWorkspace "${PROJECT_NAME}-${BUILD_NUMBER}"
+          label 'ec2-fleet'
         }
       }
 
@@ -118,7 +123,6 @@ pipeline {
 
     stage('Release') {
       when {
-        beforeAgent true
         branch DEFAULT_BRANCH
         not {
           changelog '\\[skip ci\\]'
@@ -129,6 +133,7 @@ pipeline {
         docker {
           image "us.gcr.io/logdna-k8s/node:17-ci"
           customWorkspace "${PROJECT_NAME}-${BUILD_NUMBER}"
+          label 'ec2-fleet'
         }
       }
 
