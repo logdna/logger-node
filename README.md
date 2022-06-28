@@ -47,6 +47,7 @@
 * **[Using with AWS Lambda](#using-with-aws-lambda)**
 * **[Proxy Support](#proxy-support)**
 * **[License](#license)**
+* **[Contributing](#contributing)**
 
 ## Migrating From Other Versions
 
@@ -613,6 +614,16 @@ Copyright © [LogDNA](https://logdna.com), released under an MIT license. See th
 
 *Happy Logging!*
 
+## Contributing
+
+This project is open-sourced, and accepts PRs from the public for bugs or feature
+enhancements. These are the guidelines for contributing:
+
+* The project uses [Commitlint][] and enforces [Conventional Commit Standard][]. Please format your commits based on these guidelines.
+* An [issue must be opened](https://github.com/logdna/logger-node/issues) in the repository for any bug, feature, or anything else that will have a PR
+  * The commit message must reference the issue with an [acceptable action tag](https://github.com/logdna/commitlint-config/blob/41aef3b69f292e39fb41a5ef24bcd7043e0fceb3/index.js#L12-L20) in the commit footer, e.g. `Fixes: #5`
+
+
 [`<Boolean>`]: https://mdn.io/boolean
 [`<Number>`]: https://mdn.io/number
 [`<Object>`]: https://mdn.io/object
@@ -621,6 +632,8 @@ Copyright © [LogDNA](https://logdna.com), released under an MIT license. See th
 [`<TypeError>`]: https://mdn.io/TypeError
 [`<RangeError>`]: https://mdn.io/RangeError
 [`<Error>`]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error
+[Commitlint]: https://commitlint.js.org
+[Conventional Commit Standard]: https://www.conventionalcommits.org/en/v1.0.0/
 
 ## Contributors ✨
 

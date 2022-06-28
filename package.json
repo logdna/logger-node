@@ -9,12 +9,13 @@
   },
   "scripts": {
     "lint": "eslint .",
-    "pretest": "npm run lint",
+    "pretest": "npm run lint && npm run commitlint",
     "test": "tap",
     "pretest:ci": "npm run lint",
     "test:ci": "tools/test-ci.sh",
     "release": "semantic-release",
-    "release:dry": "semantic-release --dry-run --no-ci --branches=${BRANCH_NAME:-main}"
+    "release:dry": "semantic-release --dry-run --no-ci --branches=${BRANCH_NAME:-main}",
+    "commitlint": "commitlint --from=origin/main --to=HEAD"
   },
   "files": [
     "lib/",
@@ -72,6 +73,11 @@
   "publishConfig": {
     "access": "public"
   },
+  "commitlint": {
+    "extends": [
+      "@logdna/commitlint-config"
+    ]
+  },
   "tap": {
     "100": true,
     "ts": false,
@@ -105,6 +111,8 @@
     "json-stringify-safe": "^5.0.1"
   },
   "devDependencies": {
+    "@logdna/commitlint-config": "^2.0.0",
+    "commitlint": "^17.0.3",
     "eslint": "^8.18.0",
     "eslint-config-logdna": "^6.1.0",
     "nock": "^13.1.3",
