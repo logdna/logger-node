@@ -1,5 +1,19 @@
 ## Changelog
 
+## [2.6.6](https://github.com/logdna/logger-node/compare/v2.6.5...v2.6.6) (2022-06-29)
+
+
+### Bug Fixes
+
+* **ci**: Specify agent label and remove `beforeAgent` [2b1e9c7](https://github.com/logdna/logger-node/commit/2b1e9c7a416bea426a199c05154e3f8ee6ed05b5) - Darin Spivey, closes: [#72](https://github.com/logdna/logger-node/issues/72)
+
+
+### Chores
+
+* **deps**: eslint@8.18.0 and eslint-config-logdna@6.1.0 [38d0655](https://github.com/logdna/logger-node/commit/38d0655c3784121254b3e9032a589b2fe67e4f7e) - Darin Spivey
+* **deps**: Install @logdna/commitlint-config@2.0.0 [158a5ea](https://github.com/logdna/logger-node/commit/158a5eae5e23b7b797589a8fd8f6f3206fe54fd9) - Darin Spivey, closes: [#72](https://github.com/logdna/logger-node/issues/72)
+* **deps**: semantic-release@19.0.3 [9b98c4a](https://github.com/logdna/logger-node/commit/9b98c4ad32d5dd900607a90f4844e0bbb1177403) - Darin Spivey
+
 ## [2.6.5](https://github.com/logdna/logger-node/compare/v2.6.4...v2.6.5) (2022-05-19)
 
 
