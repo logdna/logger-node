@@ -505,14 +505,15 @@ if the HTTP calls becomes successful, they will begin to send immediately, and w
 ```javascript
 const {createLogger} = require('@logdna/logger')
 const {once} = require('events')
+const process = require('process')
 
-const logger = createLogger('<YOUR KEY HERE>')
+const logger = createLogger('This is not a real key and will cause an error')
 
 logger.on('error', console.error)
 
 function onSignal(signal) {
-  logger.warn({signal}, 'received signal, shutting down')
-  shutdown()
+  logger.warn(`received signal ${signal} shutting down`, {meta: {signal}})
+  shutdown().catch(() => {})
 }
 
 async function shutdown() {
@@ -521,6 +522,13 @@ async function shutdown() {
 
 process.on('SIGTERM', onSignal)
 process.on('SIGINT', onSignal)
+
+// For running this as a standalone example, an error will be shown due
+// to the key being invalid, but it shows the signal handler message
+// attempting to be sent for ingestion.
+setTimeout(() => {
+  process.kill(process.pid)
+}, 1000)
 ```
 
 ## Client Side
