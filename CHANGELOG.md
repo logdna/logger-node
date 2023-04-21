@@ -1,5 +1,17 @@
 ## Changelog
 
+## [2.6.7](https://github.com/logdna/logger-node/compare/v2.6.6...v2.6.7) (2023-04-21)
+
+
+### Bug Fixes
+
+* **doc**: Best practices code snipit does not work as an example [4864553](https://github.com/logdna/logger-node/commit/4864553d04cab50b7cdeaad4020c3cb09cb35880) - Darin Spivey, closes: [#74](https://github.com/logdna/logger-node/issues/74)
+
+
+### Chores
+
+* **ci**: Test with node 18 [efd6a44](https://github.com/logdna/logger-node/commit/efd6a44234dd671c7dc8e5d97611a4abdba81ec4) - Darin Spivey
+
 ## [2.6.6](https://github.com/logdna/logger-node/compare/v2.6.5...v2.6.6) (2022-06-29)
 
 

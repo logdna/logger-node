@@ -1,6 +1,6 @@
 {
   "name": "@logdna/logger",
-  "version": "2.6.6",
+  "version": "2.6.7",
   "description": "LogDNA's Node.js Logging Module.",
   "main": "index.js",
   "types": "types.d.ts",
