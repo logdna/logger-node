@@ -1,5 +1,18 @@
 ## Changelog
 
+## [2.6.8](https://github.com/logdna/logger-node/compare/v2.6.7...v2.6.8) (2023-11-07)
+
+
+### Bug Fixes
+
+* **deps**: Bump axios@1.6.0 fixes CVE-2023-45857 [f37105c](https://github.com/logdna/logger-node/commit/f37105c05630b23081c059103ec8dc18d7c1195f) - Darin Spivey, closes: [#84](https://github.com/logdna/logger-node/issues/84)
+
+
+### Chores
+
+* **deps**: Bump @logdna/stdlib@1.2.3 [c7a791c](https://github.com/logdna/logger-node/commit/c7a791cab50422527a5ce508e210f68746e7da3b) - Darin Spivey
+* **deps**: Bump https-proxy-agent@7.0.2 [c15e8ba](https://github.com/logdna/logger-node/commit/c15e8ba1ca4271eb8b47a6aec92724fb38f37e4b) - Darin Spivey
+
 ## [2.6.7](https://github.com/logdna/logger-node/compare/v2.6.6...v2.6.7) (2023-04-21)
 
 
