@@ -258,7 +258,6 @@ test('Logger instance properties', async (t) => {
     , 'ignoreRetryableErrors was set correctly'
     )
 
-    console.log({log}, 'log content')
     t.equal(
       log[Symbol.for('maxAttempts')]
     , 5
