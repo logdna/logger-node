@@ -65,7 +65,7 @@ test('Logger instance properties', async (t) => {
       , agent: Object
       , headers: {
           'Content-Type': 'application/json; charset=UTF-8'
-        , 'Authorization': /^Basic \w+/
+        , 'apikey': apiKey
         }
       , qs: {
           hostname: String
