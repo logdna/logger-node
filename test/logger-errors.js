@@ -266,6 +266,7 @@ test('HTTP timeout will emit Error and continue to retry', (t) => {
   const expectedHeaders = {
     'Content-Type': 'application/json; charset=UTF-8'
   , 'user-agent': `${pkg.name}/${pkg.version}`
+  , 'apiKey': '< YOUR INGESTION KEY HERE >'
   }
 
   logger.on('error', (err) => {
