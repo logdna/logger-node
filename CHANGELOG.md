@@ -1,5 +1,12 @@
 ## Changelog
 
+## [2.6.9](https://github.com/logdna/logger-node/compare/v2.6.8...v2.6.9) (2024-06-26)
+
+
+### Bug Fixes
+
+* make compatible with pipeline [cdcc6b3](https://github.com/logdna/logger-node/commit/cdcc6b348952b372de7331b4de39493f17a012fa) - Gregory Janco, closes: [#86](https://github.com/logdna/logger-node/issues/86)
+
 ## [2.6.8](https://github.com/logdna/logger-node/compare/v2.6.7...v2.6.8) (2023-11-07)
 
 
