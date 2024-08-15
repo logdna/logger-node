@@ -1,12 +1,13 @@
 declare module "@logdna/logger" {
   import { EventEmitter } from 'events';
-  enum LogLevel {
-    trace,
-    debug,
-    info,
-    warn,
-    error,
-    fatal
+
+  export enum LogLevel {
+    trace = 'TRACE',
+    debug = 'DEBUG',
+    info = 'INFO',
+    warn = 'WARN',
+    error = 'ERROR',
+    fatal = 'FATAL'
   }
 
   type CustomLevel = string
