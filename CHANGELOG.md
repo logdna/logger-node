@@ -1,5 +1,12 @@
 ## Changelog
 
+## [2.6.10](https://github.com/logdna/logger-node/compare/v2.6.9...v2.6.10) (2024-08-15)
+
+
+### Chores
+
+* **dep**: Bump axios to fix SSRF [9ccf500](https://github.com/logdna/logger-node/commit/9ccf500e62849bba6ac1cb9fa5138fe2d8bda8a3) - Darin Spivey, closes: [#89](https://github.com/logdna/logger-node/issues/89)
+
 ## [2.6.9](https://github.com/logdna/logger-node/compare/v2.6.8...v2.6.9) (2024-06-26)
 
 
