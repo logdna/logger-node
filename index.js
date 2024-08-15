@@ -14,7 +14,17 @@ function createLogger(key, options) {
   return new Logger(key, options)
 }
 
+const LogLevel = {
+  trace: 'TRACE'
+, debug: 'DEBUG'
+, info: 'INFO'
+, warn: 'WARN'
+, error: 'ERROR'
+, fatal: 'FATAL'
+}
+
 module.exports = {
   createLogger
 , setupDefaultLogger
+, LogLevel
 }

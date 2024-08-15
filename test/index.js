@@ -5,10 +5,18 @@ const index = require('../index.js')
 const {apiKey, createOptions} = require('./common/index.js')
 
 test('Index exports are correct', async (t) => {
-  t.equal(Object.keys(index).length, 2, 'property count is correct')
+  t.equal(Object.keys(index).length, 3, 'property count is correct')
   t.match(index, {
     createLogger: Function
   , setupDefaultLogger: Function
+  , LogLevel: {
+      trace: 'TRACE'
+    , debug: 'DEBUG'
+    , info: 'INFO'
+    , warn: 'WARN'
+    , error: 'ERROR'
+    , fatal: 'FATAL'
+    }
   }, 'Exported properties are correct')
 })
 
