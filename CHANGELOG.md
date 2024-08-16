@@ -1,5 +1,12 @@
 ## Changelog
 
+## [2.6.11](https://github.com/logdna/logger-node/compare/v2.6.10...v2.6.11) (2024-08-16)
+
+
+### Bug Fixes
+
+* **pkg**: Export `LogLevel` to satisfy typescript defs [3c543fb](https://github.com/logdna/logger-node/commit/3c543fbeca49c92f947ef09e3769cec5ca2ed642) - Darin Spivey, closes: [#47](https://github.com/logdna/logger-node/issues/47)
+
 ## [2.6.10](https://github.com/logdna/logger-node/compare/v2.6.9...v2.6.10) (2024-08-15)
 
 
