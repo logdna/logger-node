@@ -1,5 +1,12 @@
 ## Changelog
 
+## [2.6.12](https://github.com/logdna/logger-node/compare/v2.6.11...v2.6.12) (2026-06-05)
+
+
+### Bug Fixes
+
+* **cve**: bump axios 1.17.0 to fix multiple cves [d165474](https://github.com/logdna/logger-node/commit/d1654749650edb1215f5d8858ae9c8c13d53b5c1) - Justin Gross
+
 ## [2.6.11](https://github.com/logdna/logger-node/compare/v2.6.10...v2.6.11) (2024-08-16)
 
 
