@@ -1,5 +1,12 @@
 ## Changelog
 
+## [2.6.13](https://github.com/logdna/logger-node/compare/v2.6.12...v2.6.13) (2026-07-09)
+
+
+### Chores
+
+* **deps**: logdna/stdlib@2.1.0 [5c4ebec](https://github.com/logdna/logger-node/commit/5c4ebec245f6c307c6e4e220bb7cfbcd6a336587) - Matt March
+
 ## [2.6.12](https://github.com/logdna/logger-node/compare/v2.6.11...v2.6.12) (2026-06-05)
 
 
